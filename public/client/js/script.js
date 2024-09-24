@@ -29,3 +29,37 @@ if(aplayer) {
   });
 }
 // End APlayer
+
+// buttonLike
+const buttonLike = document.querySelector("[button-like]");
+if(buttonLike){
+  buttonLike.addEventListener("click", () => {
+    const status = buttonLike.classList.contains("like");
+    const data = {
+      id: buttonLike.getAttribute("button-like")
+    };
+    if(status){
+      data.type = "dislike";
+      buttonLike.classList.remove("like");
+    }
+    else{
+      data.type = "like";
+      buttonLike.classList.add("like");
+    }
+    fetch("/songs/like", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
+    .then(res=> res.json())
+    .then(dataReturn => {
+      if(dataReturn.code == 200){
+        const innerLike = buttonLike.querySelector(".inner-number");
+        innerLike.innerHTML = dataReturn.updateLike;
+      }
+    })
+  });
+}
+// End buttonLike

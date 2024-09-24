@@ -37,3 +37,37 @@ export const detail = async (req: Request, res: Response) => {
     topic: topic
   });
 }
+
+export const like = async (req:Request, res: Response) => {
+  try {
+    const {id, type} = req.body;
+    const song = await songModel.findOne({
+      _id: id
+    }).select("like");
+
+    let likeCurrent = song.like;
+
+    if(likeCurrent >= 0){
+      if(type == "like"){
+        likeCurrent += 1;
+      }
+      else{
+        if(likeCurrent > 0)
+          likeCurrent -= 1;
+      }
+    }
+    await songModel.updateOne({
+      _id: id
+    }, {
+      like: likeCurrent,
+      typeLike: type
+    });
+
+    res.json({
+      code: 200,
+      updateLike: likeCurrent
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
