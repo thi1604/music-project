@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { songModel } from "../../models/song.model";
 import { singerModel } from "../../models/singer.model";
 import { topicModel } from "../../models/topics.model";
+import { likeSongModel } from "../../models/like-song.model";
 
 
 export const index = async (req: Request, res: Response) =>{
@@ -20,6 +21,23 @@ export const detail = async (req: Request, res: Response) => {
     deleted: false
   });
 
+  const existLike = await likeSongModel.findOne({
+    userId: res.locals.user.id,
+    songId: song.id,
+    deleted: false
+  });
+
+  if(existLike){
+    song["typeLike"] = "like";
+  }
+  // else {
+  //   const dataLike = new likeSongModel({
+  //     userId: res.locals.user.id,
+  //     songId: song.id,
+  //     deleted: false
+  //   })
+  //   await dataLike.save();
+  //  }
   const singer = await singerModel.findOne({
     _id: song.singerId,
     deleted: false
@@ -50,17 +68,44 @@ export const like = async (req:Request, res: Response) => {
     if(likeCurrent >= 0){
       if(type == "like"){
         likeCurrent += 1;
+
+        const existLike = await likeSongModel.findOne({
+          userId: res.locals.user.id,
+          songId: song.id
+        });
+
+        if(!existLike){
+          const dataLike = new likeSongModel({
+            userId: res.locals.user.id,
+            songId: song.id,
+            deleted: false
+          })
+          await dataLike.save();
+        }
+        else{
+          await likeSongModel.updateOne({
+            userId: res.locals.user.id,
+            songId: song.id
+          }, {
+            deleted: false
+          });
+        }
       }
       else{
         if(likeCurrent > 0)
           likeCurrent -= 1;
+        await likeSongModel.updateOne({
+          userId: res.locals.user.id,
+          songId: song.id
+        }, {
+          deleted: true
+        });
       }
     }
     await songModel.updateOne({
       _id: id
     }, {
-      like: likeCurrent,
-      typeLike: type
+      like: likeCurrent
     });
 
     res.json({
