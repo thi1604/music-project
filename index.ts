@@ -5,7 +5,7 @@ import {prefixAdmin} from "./config/system";
 import {routesClient} from "./routes/client/index.route";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
-
+import methodOverride from "method-override";
 dotenv.config();
 
 
@@ -13,6 +13,8 @@ const app : Express = express();
 const port : number | string = process.env.PORT;
 app.use(cookieParser('ThiBeo'));
 app.use(express.static(`${__dirname}/public`)); // Nhung folder FE vao project
+//Nhung cac phuong thuc khac cho form(mac dinh form co get va post)
+app.use(methodOverride('_method'));
 
 connectDatabase();
 
