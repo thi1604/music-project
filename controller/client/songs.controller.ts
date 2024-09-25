@@ -124,6 +124,7 @@ export const like = async (req:Request, res: Response) => {
     console.log(error);
   }
 };
+
 export const love = async (req:Request, res: Response) => {
   try {
     const {id} = req.body;
@@ -158,3 +159,25 @@ export const love = async (req:Request, res: Response) => {
     console.log(error);
   }
 };
+
+export const search = async (req: Request, res: Response) => { 
+  
+  const keyword = `${req.query.keyword}`;
+
+  let songs = [];
+
+  if(keyword){
+    let regex = new RegExp(keyword, "i");
+    songs = await songModel.find({
+      title: regex,
+      deleted: false,
+      status: "active"
+    });
+  }
+
+  res.render("client/pages/songs/list.pug", {
+    pageTitle: `Kết quả tìm kiếm: ${keyword}`,
+    listSongs: songs
+  });
+  
+}

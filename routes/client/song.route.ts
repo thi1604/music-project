@@ -13,5 +13,7 @@ route.patch("/like", controller.like);
 
 route.patch("/love", controller.love);
 
+route.get("/search", controller.search);
+
 
 export const routeSong = route;
