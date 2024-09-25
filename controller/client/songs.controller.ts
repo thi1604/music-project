@@ -3,6 +3,7 @@ import { songModel } from "../../models/song.model";
 import { singerModel } from "../../models/singer.model";
 import { topicModel } from "../../models/topics.model";
 import { likeSongModel } from "../../models/like-song.model";
+import { loveSongModel } from "../../models/love-song.model";
 
 
 export const index = async (req: Request, res: Response) =>{
@@ -26,9 +27,16 @@ export const detail = async (req: Request, res: Response) => {
     songId: song.id,
     deleted: false
   });
+  const existLove = await loveSongModel.findOne({
+    userId: res.locals.user.id,
+    songId: song.id,
+  });
 
   if(existLike){
     song["typeLike"] = "like";
+  }
+  if(existLove){
+    song["loveSong"] = "love";
   }
   // else {
   //   const dataLike = new likeSongModel({
@@ -111,6 +119,40 @@ export const like = async (req:Request, res: Response) => {
     res.json({
       code: 200,
       updateLike: likeCurrent
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const love = async (req:Request, res: Response) => {
+  try {
+    const {id} = req.body;
+    
+    const existLoveSong = await loveSongModel.findOne({
+      userId: res.locals.user.id,
+      songId: id
+    });
+
+    let status:string = "";
+
+    if(existLoveSong){
+      await loveSongModel.deleteOne({
+        userId: res.locals.user.id,
+        songId: id
+      });
+      status = "noLove";
+    }
+    else{
+      const data = new loveSongModel({
+        userId: res.locals.user.id,
+        songId: id
+      });
+      await data.save();
+      status = "love";
+    }
+    res.json({
+      code: 200,
+      status: status
     });
   } catch (error) {
     console.log(error);

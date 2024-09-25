@@ -63,3 +63,28 @@ if(buttonLike){
   });
 }
 // End buttonLike
+const buttonLove = document.querySelector("[button-love]");
+if(buttonLove){
+  buttonLove.addEventListener("click", ()=> {
+    const data = {
+      id: buttonLove.getAttribute("button-love")
+    };
+    fetch("/songs/love", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.status == "love"){
+        buttonLove.classList.add("love-song");
+      }
+      else{
+        buttonLove.classList.remove("love-song");
+      }
+    })
+  });
+}
+// buttonLove

@@ -11,6 +11,7 @@ export const infoUser = async (req:Request, res:Response, next:NextFunction) => 
     });
     if(user){
       res.locals["user"] = user;
+      // console.log(res.locals.user);
       // res.cookie(
       //   "cartId", 
       //   user.cartId, 

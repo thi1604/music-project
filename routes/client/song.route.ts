@@ -9,5 +9,7 @@ route.get("/detail/:slugSong", controller.detail);
 
 route.patch("/like", controller.like);
 
+route.patch("/love", controller.love);
+
 
 export const routeSong = route;
