@@ -6,13 +6,13 @@ import { likeSongModel } from "../../models/like-song.model";
 import { loveSongModel } from "../../models/love-song.model";
 
 
-export const index = async (req: Request, res: Response) =>{
-  const listSongs = await songModel.find().select("-description");
-  res.render("client/pages/songs/list.pug", {
-    pageTitle: "Danh sách bài hát",
-    listSongs: listSongs
-  })
-}
+// export const index = async (req: Request, res: Response) =>{
+//   const listSongs = await songModel.find().select("-description");
+//   res.render("client/pages/songs/list.pug", {
+//     pageTitle: "Danh sách bài hát",
+//     listSongs: listSongs
+//   })
+// }
 
 export const detail = async (req: Request, res: Response) => {
   const slugSong : string = req.params.slugSong;

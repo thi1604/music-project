@@ -3,7 +3,9 @@ const route = express.Router();
 
 import * as controller from "../../controller/client/songs.controller";
 
-route.get("/", controller.index);
+// route.get("/", controller.index);
+
+// route.get("/topics/:slug")
 
 route.get("/detail/:slugSong", controller.detail);
 
