@@ -167,17 +167,37 @@ export const search = async (req: Request, res: Response) => {
   let songs = [];
 
   if(keyword){
-    let regex = new RegExp(keyword, "i");
+    // let regex = new RegExp(keyword, "i");
+    let keywordSlug = keyword;
+
+    keywordSlug = keyword.trim();
+
+    keywordSlug = keywordSlug.replace(/\s/g, "-");
+    keywordSlug = keywordSlug.replace(/-+/g, "-"); 
+    const regexKeyWord = new RegExp(keyword, "i");
+    const regexKeyWordSlug = new RegExp(keywordSlug, "i");
+
     songs = await songModel.find({
-      title: regex,
+      $or: [
+        {title: regexKeyWord}, 
+        {slug: regexKeyWordSlug}
+      ],
       deleted: false,
       status: "active"
     });
+  }
+
+  for (const item of songs) {
+    const singer =  await singerModel.findOne({
+      _id: item.singerId
+    }).select("fullName");
+
+    item["singerFullName"] = singer.fullName;
   }
 
   res.render("client/pages/songs/list.pug", {
     pageTitle: `Kết quả tìm kiếm: ${keyword}`,
     listSongs: songs
   });
-  
+  // res.send("ok");
 }
