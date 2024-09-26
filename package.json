@@ -23,7 +23,8 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.15",
     "pug": "^3.0.3",
-    "streamifier": "^0.1.1"
+    "streamifier": "^0.1.1",
+    "unidecode": "^1.1.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

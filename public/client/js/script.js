@@ -88,3 +88,49 @@ if(buttonLove){
   });
 }
 // buttonLove
+
+// suggestFind
+
+const formFind = document.querySelector(".box-search");
+if(formFind){
+  const inputForm = formFind.querySelector(`input[name='keyword']`);
+  inputForm.addEventListener("keyup", ()=> {
+    const keyword = inputForm.value;
+    fetch(`/songs/search/suggest?keyword=${keyword}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      },
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.code == 200){
+        // console.log("ok");
+        // console.log(data.songsFinal);
+        const htmlSong = data.songsFinal.map(item  => `
+        <a class="inner-item" href="/songs/detail/${item.slug}">
+          <div class="inner-image">
+            <img src="${item.avatar}">
+          </div>
+          <div class="inner-info">
+            <div class="inner-title">${item.title}</div>
+            <div class="inner-singer">
+              <i class="fa-solid fa-microphone-lines"></i> ${item.singerFullName}
+            </div>
+          </div>
+        </a>
+        `);
+        const suggest = document.querySelector(".inner-suggest");
+        const listSongFinal = suggest.querySelector(".inner-list");
+        listSongFinal.innerHTML = htmlSong.join("");
+        if(data.songsFinal.length > 0 && inputForm.value != ""){
+          suggest.classList.add("show");
+        }
+        else{
+          suggest.classList.remove("show");
+        }
+      }
+    })
+  });
+}
+// End suggestFind

@@ -4,7 +4,7 @@ import { singerModel } from "../../models/singer.model";
 import { topicModel } from "../../models/topics.model";
 import { likeSongModel } from "../../models/like-song.model";
 import { loveSongModel } from "../../models/love-song.model";
-
+import unidecode from "unidecode";
 
 // export const index = async (req: Request, res: Response) =>{
 //   const listSongs = await songModel.find().select("-description");
@@ -162,6 +162,8 @@ export const love = async (req:Request, res: Response) => {
 
 export const search = async (req: Request, res: Response) => { 
   
+  const type = req.params.type;
+  
   const keyword = `${req.query.keyword}`;
 
   let songs = [];
@@ -174,9 +176,11 @@ export const search = async (req: Request, res: Response) => {
 
     keywordSlug = keywordSlug.replace(/\s/g, "-");
     keywordSlug = keywordSlug.replace(/-+/g, "-"); 
+    keywordSlug = unidecode(keywordSlug);
+    // console.log(keywordSlug);
     const regexKeyWord = new RegExp(keyword, "i");
     const regexKeyWordSlug = new RegExp(keywordSlug, "i");
-
+    // console.log(regexKeyWord, regexKeyWordSlug)
     songs = await songModel.find({
       $or: [
         {title: regexKeyWord}, 
@@ -184,20 +188,39 @@ export const search = async (req: Request, res: Response) => {
       ],
       deleted: false,
       status: "active"
+    }).select("-deleted -updatedAt -status");
+    for (const item of songs) {
+      const singer =  await singerModel.findOne({
+        _id: item.singerId
+      }).select("fullName");
+  
+      item["singerFullName"] = singer.fullName;
+    }
+  
+    if(type == "result"){
+      res.render("client/pages/songs/list.pug", {
+        pageTitle: `Kết quả tìm kiếm: ${keyword}`,
+        listSongs: songs
+      });
+    }
+    else if(type == "suggest"){
+      res.json({
+        code: 200,
+        songsFinal: songs
+      });
+    }
+    else{
+      res.json({
+        code: 400
+      });
+    }
+  }
+  else{
+    res.json({
+      code: 400
     });
   }
 
-  for (const item of songs) {
-    const singer =  await singerModel.findOne({
-      _id: item.singerId
-    }).select("fullName");
 
-    item["singerFullName"] = singer.fullName;
-  }
-
-  res.render("client/pages/songs/list.pug", {
-    pageTitle: `Kết quả tìm kiếm: ${keyword}`,
-    listSongs: songs
-  });
   // res.send("ok");
 }

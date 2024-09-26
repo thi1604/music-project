@@ -8,8 +8,9 @@ header.header
       .col-5
         .box-search
           form(
-            action="/songs/search"
+            action="/songs/search/result"
             method="GET"
+            autocomplete="off" 
           )
             div(class="form-group d-flex mb-0")
               input(
@@ -23,6 +24,8 @@ header.header
                 type="submit"
                 class="btn btn-primary"
               ) Tìm
+          .inner-suggest
+            .inner-list
       .col-4
         .inner-menu
           ul
