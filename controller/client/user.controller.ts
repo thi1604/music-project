@@ -13,13 +13,13 @@ export const register = async (req:Request, res:Response) => {
 
 export const registerPost = async (req:Request, res:Response) => {
   if(!req.body.fullName || !req.body.email || !req.body.password){
-    // req.flash("error", "Vui lòng nhập đầy đủ thông tin bắt buộc!");
+    req.flash("error", "Vui lòng nhập đầy đủ thông tin bắt buộc!");
     res.redirect("back");
     return;
   }
   const subEmail = "@";
   if(!req.body.email.includes(subEmail)){
-    // req.flash("error", "Email không đúng định dạng!");
+    req.flash("error", "Email không đúng định dạng!");
     res.redirect("back");
     return;
   }
@@ -29,7 +29,7 @@ export const registerPost = async (req:Request, res:Response) => {
   });
 
   if(existUser){
-    // req.flash("error", "Email đã được đăng kí!");
+    req.flash("error", "Email đã được đăng kí!");
     res.redirect("back");
     return;
   }
@@ -44,7 +44,7 @@ export const registerPost = async (req:Request, res:Response) => {
   const time = 24 * 3 * 60 * 60 * 1000;
   res.cookie("tokenUser", user.tokenUser, { expires: new Date(Date.now() + time)});
 
-  // req.flash("success", "Đăng kí thành công!");
+  req.flash("success", "Đăng kí thành công!");
   res.redirect("/");
 }
 
@@ -60,21 +60,21 @@ export const loginPost = async (req:Request, res:Response) => {
     email : emailCurrent
   });
   if(!user){
-    // req.flash("error", "Sai thông tin email!");
+    req.flash("error", "Sai thông tin email!");
     res.redirect("back");
     return;
   }
   if(md5(req.body.password) != user.password){
-    // req.flash("error", "Sai mật khẩu!");
+    req.flash("error", "Sai mật khẩu!");
     res.redirect("back");
     return;
   }
   if(user.status == "inactive" || user.deleted == true){
-    // req.flash("error", "Tài khoản đã khóa hoặc đã xóa!");
+    req.flash("error", "Tài khoản đã khóa hoặc đã xóa!");
     res.redirect("back");
     return;
   }
-  // req.flash("success", "Đăng nhập thành công!");
+  req.flash("success", "Đăng nhập thành công!");
   const time = 24 * 3 * 60 * 60 * 1000;
   res.cookie("tokenUser", user.tokenUser, { expires: new Date(Date.now() + time)});
   // res.cookie(
@@ -90,7 +90,7 @@ export const detail = async (req:Request, res:Response) => {
   if(req.cookies.tokenUser){
     const idUser = req.params.id;
     if(idUser != res.locals.user.id){
-      // req.flash("error", "Lỗi!");
+      req.flash("error", "Lỗi!");
       res.redirect("/");
     }
     else{
@@ -107,7 +107,7 @@ export const editPatch = async (req:Request, res:Response) => {
   if(req.cookies.tokenUser) {
     const idUser = req.params.id;
     if(idUser != res.locals.user.id){
-      // req.flash("error", "Lỗi!");
+      req.flash("error", "Lỗi!");
       res.redirect("/");
     }
     else{
@@ -116,7 +116,7 @@ export const editPatch = async (req:Request, res:Response) => {
         _id: id
       }, req.body);
     }
-    // req.flash("success", "Cập nhật thành công!");
+    req.flash("success", "Cập nhật thành công!");
     res.redirect("back");
   }
   else {
@@ -145,18 +145,18 @@ export const changePasswordPatch = async (req:Request, res:Response) => {
   if(req.cookies.tokenUser){
     const dataChangePassword = {passwordOld:String, passwordNew:String, passwordNewAgain:String} = req.body;
     if(dataChangePassword.passwordNew == ""){
-      // req.flash("error", "Lỗi!");
+      req.flash("error", "Lỗi!");
       res.redirect("/");
       return;
     }
     const user = res.locals.user;
     // console.log(passwordOld, passwordNew, passwordNewAgain);
     if(dataChangePassword.passwordNew != dataChangePassword.passwordNewAgain) {
-      // req.flash("error", "Mật khẩu mới không khớp!");
+      req.flash("error", "Mật khẩu mới không khớp!");
       res.redirect("back");
     }
     else if(md5(dataChangePassword.passwordOld) != user.password){
-      // req.flash("error", "Mật khẩu cũ không chính xác!");
+      req.flash("error", "Mật khẩu cũ không chính xác!");
       res.redirect("back");
     }
     else {
@@ -202,10 +202,10 @@ export const changePasswordCheckOtpPatch = async (req:Request, res:Response) => 
       },{
         password: md5(dataChangePassword["passwordNew"])
       });
-      // req.flash("success", "Đổi mật khẩu thành công!");
+      req.flash("success", "Đổi mật khẩu thành công!");
       res.redirect(`/user/detail/${user.id}`);
     } catch (error) {
-      // req.flash("error", "Lỗi!");
+      req.flash("error", "Lỗi!");
       res.redirect("/");
     }
   }
@@ -233,7 +233,7 @@ export const forgotPasswordPost = async (req:Request, res:Response) => {
   });
 
   if(!emailCurrent){
-    // req.flash("error","Email không tồn tại trong hệ thống!");
+    req.flash("error","Email không tồn tại trong hệ thống!");
     res.redirect("back");
     return;
   }
@@ -275,7 +275,7 @@ export const checkOtp = async (req:Request, res:Response) => {
 export const checkOtpPost = async (req:Request, res:Response) => {
   const {email, otp} = req.body;
   if(!otp){
-    // req.flash("error", "Lỗi!");
+    req.flash("error", "Lỗi!");
     res.redirect("back");
     return;
   }
@@ -285,7 +285,7 @@ export const checkOtpPost = async (req:Request, res:Response) => {
   });
 
   if(!otpReal){
-    // req.flash("error", "Mã otp không chính xác!");
+    req.flash("error", "Mã otp không chính xác!");
     res.redirect("back");
     return;
   }
@@ -305,12 +305,12 @@ export const resetPassword = async (req:Request, res:Response) => {
 
 export const resetPasswordPatch = async (req:Request, res:Response) => {
   if(!req.cookies.idUser){
-    // req.flash("error", "Otp đã hết hạn!");
+    req.flash("error", "Otp đã hết hạn!");
     res.redirect("/user/password/forgot");
     return;
   }
   if(!req.body.password){
-    // req.flash("error", "Lỗi!");
+    req.flash("error", "Lỗi!");
     res.redirect("/user/password/forgot");
     return;
   }
@@ -328,7 +328,7 @@ export const resetPasswordPatch = async (req:Request, res:Response) => {
       _id: req.cookies.idUser
     }).select("tokenUser");
   
-    // req.flash("success", "Mật khẩu của bạn đã được đổi!");
+    req.flash("success", "Mật khẩu của bạn đã được đổi!");
     res.clearCookie("idUser");
     const time = 3 * 24 * 60 * 60 * 1000;
     res.cookie("tokenUser", user.tokenUser, { expires: new Date(Date.now() + time)});

@@ -188,13 +188,25 @@ export const search = async (req: Request, res: Response) => {
       ],
       deleted: false,
       status: "active"
-    }).select("-deleted -updatedAt -status");
+    }).select("title avatar singerId slug");
+
+    let songsResult = [];
+
     for (const item of songs) {
       const singer =  await singerModel.findOne({
         _id: item.singerId
       }).select("fullName");
-  
+
       item["singerFullName"] = singer.fullName;
+
+      //Tyscript chi dua vao khai bao ban dau de hoat dong cho object, du co them van lay khai bao ban dau neu khong dung cac extension
+      const dataSong = {
+        title: item.title,
+        avatar: item.avatar,
+        slug: item.slug,
+        singerFullName: singer.fullName
+      }
+      songsResult.push(dataSong);
     }
   
     if(type == "result"){
@@ -206,7 +218,7 @@ export const search = async (req: Request, res: Response) => {
     else if(type == "suggest"){
       res.json({
         code: 200,
-        songsFinal: songs
+        songsFinal: songsResult
       });
     }
     else{
