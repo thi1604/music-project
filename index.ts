@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import methodOverride from "method-override";
 import session from "express-session";
 import flash from "express-flash";
+import { routesAdmin } from "./routes/admin/index.route";
 
 dotenv.config();
 
@@ -17,6 +18,10 @@ app.use(cookieParser('ThiBeo'));
 app.use(express.static(`${__dirname}/public`)); // Nhung folder FE vao project
 
 connectDatabase();
+
+
+app.locals["prefixAdmin"] = prefixAdmin;
+
 
 app.set("views", "./views");
 app.set("view engine", "pug");
@@ -50,6 +55,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(methodOverride('_method'));
 
 routesClient(app);
+routesAdmin(app);
 
 app.listen(port, ()=> {
   console.log(`App listening on port ${port}`);
