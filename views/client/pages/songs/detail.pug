@@ -18,6 +18,10 @@ block main
               <i class="fa-regular fa-thumbs-up"></i>
               <span class="inner-number mr-1">#{song.like}</span>
               | thích
+            div(class="inner-action inner-listen" button-listen=`${song.listenNumber}`)
+              <i class="fa-solid fa-headphones"></i>
+              <span class="inner-number mr-1">#{song.listenNumber}</span>
+              | Lượt nghe 
             div(class="inner-action inner-heart " + (song.loveSong=="love"?"love-song":"") button-love=`${song.id}`)
               <i class="fa-regular fa-heart"></i> Bài hát yêu thích
           .inner-play

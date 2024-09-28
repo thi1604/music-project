@@ -15,5 +15,7 @@ route.patch("/love", controller.love);
 
 route.get("/search/:type", controller.search);
 
+route.patch("/listen/:idSong", controller.listenPatch);
+
 
 export const routeSong = route;

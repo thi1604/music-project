@@ -236,3 +236,35 @@ export const search = async (req: Request, res: Response) => {
 
   // res.send("ok");
 }
+
+export const listenPatch = async (req: Request, res: Response) => {
+  const idSong = req.params.idSong;
+  try {
+    const song = await songModel.findOne({
+      _id: idSong
+    }).select("listenNumber");
+    if(song){
+      let listenNumberCurrent = song.listenNumber;
+      listenNumberCurrent += 1;
+      await songModel.updateOne({
+        _id: idSong
+      }, {
+        "listenNumber": listenNumberCurrent
+      });
+      res.json({
+        code: 200,
+        messager: "Cập nhật thành công",
+        newListen : listenNumberCurrent
+      });
+    }
+    else{
+      res.json({
+        code: 400
+      });
+    }
+  } catch (error) {
+    res.json({
+      code: 400
+    });
+  }
+}

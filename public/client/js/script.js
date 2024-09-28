@@ -19,9 +19,34 @@ if(aplayer) {
   });
   const avatar = document.querySelector(".singer-detail .inner-avatar");
   const avatar2 = document.querySelector(".aplayer .aplayer-pic");
+  let listened = false; 
   ap.on('play', function () {
     avatar.style.animationPlayState = "running";
     avatar2.style.animationPlayState = "running";
+    if(listened == false){
+      listened = true;
+      setTimeout(() => {
+        ap.on('ended', function () {
+          fetch(`/songs/listen/${dataSong._id}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json"
+            }
+          })
+          .then(res => res.json())
+          .then(data => {
+            if(data.code == 200){
+              const listendDiv = document.querySelector(".inner-action.inner-listen");
+              if(listendDiv){
+                const listenElement = listendDiv.querySelector(".inner-number");
+                listenElement.innerHTML = data.newListen;
+              }
+            }
+          })
+        })
+      }, ap.audio.duration / 5 * 4 * 1000);
+      // ap.audio.duration / 5 * 4 * 1000
+    }
   });
   ap.on('pause', function () {
     avatar.style.animationPlayState = "paused";
