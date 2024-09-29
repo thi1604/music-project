@@ -88,3 +88,23 @@
   display: none;
 }
 /* End Image Preview */
+
+
+/* Show-alert */
+
+.show-alert {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 999;
+  font-size: 25px;
+  padding: 5px;
+}
+
+.alert-success {
+  border-radius: 10px;}
+
+.show-alert.hidden {
+  display: none;
+}
+/* End Show-alert */
