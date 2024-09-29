@@ -9,6 +9,7 @@ import methodOverride from "method-override";
 import session from "express-session";
 import flash from "express-flash";
 import { routesAdmin } from "./routes/admin/index.route";
+import path from "path";
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ connectDatabase();
 app.locals["prefixAdmin"] = prefixAdmin;
 
 
-app.set("views", "./views");
+app.set("views", `${__dirname}/views`);
 app.set("view engine", "pug");
 
 // Nhung flash
@@ -53,6 +54,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 //Nhung cac phuong thuc khac cho form(mac dinh form co get va post)
 app.use(methodOverride('_method'));
+
+// tinyMCE
+app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
 
 routesClient(app);
 routesAdmin(app);
