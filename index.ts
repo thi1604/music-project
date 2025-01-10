@@ -1,5 +1,5 @@
 import express, {Express, Request, Response} from "express";
-import { connectDatabase } from "./config/database";
+import {connect} from "./config/database";
 import dotenv from "dotenv";
 import {prefixAdmin} from "./config/system";
 import {routesClient} from "./routes/client/index.route";
@@ -18,7 +18,7 @@ const port : number | string = process.env.PORT;
 app.use(cookieParser('ThiBeo'));
 app.use(express.static(`${__dirname}/public`)); // Nhung folder FE vao project
 
-connectDatabase();
+connect();
 
 
 app.locals["prefixAdmin"] = prefixAdmin;

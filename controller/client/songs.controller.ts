@@ -21,31 +21,25 @@ export const detail = async (req: Request, res: Response) => {
     slug: slugSong,
     deleted: false
   });
-
-  const existLike = await likeSongModel.findOne({
-    userId: res.locals.user.id,
-    songId: song.id,
-    deleted: false
-  });
-  const existLove = await loveSongModel.findOne({
-    userId: res.locals.user.id,
-    songId: song.id,
-  });
-
-  if(existLike){
-    song["typeLike"] = "like";
+  const userLogined = res.locals["user"];
+  if(userLogined){
+    const existLike = await likeSongModel.findOne({
+      userId: userLogined["id"],
+      songId: song.id,
+      deleted: false
+    });
+    const existLove = await loveSongModel.findOne({
+      userId: userLogined["id"],
+      songId: song.id,
+    });
+  
+    if(existLike){
+      song["typeLike"] = "like";
+    }
+    if(existLove){
+      song["loveSong"] = "love";
+    }
   }
-  if(existLove){
-    song["loveSong"] = "love";
-  }
-  // else {
-  //   const dataLike = new likeSongModel({
-  //     userId: res.locals.user.id,
-  //     songId: song.id,
-  //     deleted: false
-  //   })
-  //   await dataLike.save();
-  //  }
   const singer = await singerModel.findOne({
     _id: song.singerId,
     deleted: false

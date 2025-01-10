@@ -8,6 +8,10 @@ const topicSchema = new mongoose.Schema({
   avatar: String,
   description: String,
   status: String,
+  outStanding: {
+    type: Boolean,
+    default: false
+  },
   deleted: {
     type: Boolean,
     default: false
