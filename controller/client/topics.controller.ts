@@ -4,7 +4,17 @@ import { songModel } from "../../models/song.model";
 import { topicModel } from "../../models/topics.model";
 
 export const index = async (req: Request, res: Response) => {
-  const listTopics = await topicModel.find();
+  let filter = {
+    deleted: false
+  }
+
+  // console.log(req.query.outStanding)
+
+  if(req.body.outStanding == true){
+    filter["outStanding"] = true
+  }
+
+  const listTopics = await topicModel.find(filter);
   
   res.send(listTopics);
 }
