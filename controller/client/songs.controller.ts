@@ -6,21 +6,23 @@ import { likeSongModel } from "../../models/like-song.model";
 import { loveSongModel } from "../../models/love-song.model";
 import unidecode from "unidecode";
 
-// export const index = async (req: Request, res: Response) =>{
-//   const listSongs = await songModel.find().select("-description");
-//   res.render("client/pages/songs/list.pug", {
-//     pageTitle: "Danh sách bài hát",
-//     listSongs: listSongs
-//   })
-// }
-
 export const detail = async (req: Request, res: Response) => {
   const slugSong : string = req.params.slugSong;
 
   const song = await songModel.findOne({
     slug: slugSong,
-    deleted: false
-  });
+    deleted: false,
+    status: "active"
+  }).select("-status -deleted");
+
+  if(!song){
+    res.send({
+      code: 400,
+      messages: "Bài hát không tồn tại trong hệ thống!"
+    })
+    return;
+  }
+
   const userLogined = res.locals["user"];
   if(userLogined){
     const existLike = await likeSongModel.findOne({
@@ -43,19 +45,12 @@ export const detail = async (req: Request, res: Response) => {
   const singer = await singerModel.findOne({
     _id: song.singerId,
     deleted: false
-  });
+  }).select("fullName");
 
-  const topic = await topicModel.findOne({
-    _id: song.topicId,
-    deleted: false
-  });
-
-  res.render("client/pages/songs/detail.pug", {
-    pageTitle: "Chi tiết bài hát",
-    song: song,
-    singer: singer,
-    topic: topic
-  });
+  res.send({
+    songCurrent: song,
+    singer: singer
+  })
 }
 
 export const like = async (req:Request, res: Response) => {

@@ -17,6 +17,7 @@ const songSchema = new mongoose.Schema({
   },
   audio: String,
   status: String,
+  totalTime: String,
   deleted: {
     type: Boolean,
     default: false

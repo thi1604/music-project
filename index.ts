@@ -10,6 +10,8 @@ import session from "express-session";
 import flash from "express-flash";
 import { routesAdmin } from "./routes/admin/index.route";
 import path from "path";
+import cors from "cors";
+
 
 dotenv.config();
 
@@ -19,6 +21,10 @@ app.use(cookieParser('ThiBeo'));
 app.use(express.static(`${__dirname}/public`)); // Nhung folder FE vao project
 
 connect();
+
+app.use(cors({
+  origin: "http://localhost:3001",
+}));
 
 
 app.locals["prefixAdmin"] = prefixAdmin;

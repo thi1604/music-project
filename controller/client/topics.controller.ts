@@ -22,27 +22,27 @@ export const index = async (req: Request, res: Response) => {
 export const songsInTopic = async (req: Request, res: Response) => {
   const topicCurrent = await topicModel.findOne({
     slug: req.params.slugTopic
-  }).select("id title");
+  }).select("id title avatar description");
 
   let listSongs = [];
 
   if(topicCurrent){
     listSongs = await songModel.find({
-      topicId: topicCurrent.id
+      topicId: topicCurrent.id,
+      deleted: false
     });
   }
 
   for (const item of listSongs) {
     const singer =  await singerModel.findOne({
-      _id: item.singerId
+      _id: item.singerId,
+      deleted: false
     }).select("fullName");
 
-    item["singerFullName"] = singer.fullName;
+    item["singerFullName"] = singer.fullName || "";
   }
-
-  res.render("client/pages/songs/list.pug", {
-    pageTitle: `Chủ đề ${topicCurrent.title}`,
+  res.send({
+    topicCurrent: topicCurrent,
     listSongs: listSongs
   });
-
 }

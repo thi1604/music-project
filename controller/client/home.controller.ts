@@ -1,9 +1,23 @@
 import { Request, Response } from "express";
+import { singerModel } from "../../models/singer.model";
+import { songModel } from "../../models/song.model";
+import { topicModel } from "../../models/topics.model";
 
 
 export const index = async (req: Request, res: Response) =>{
+
+  const filter = {
+    outStanding: true,
+    deleted: false
+  }
  
-  res.render("client/pages/home/index.pug", {
-    pageTitle: "Trang chủ"
+  const listSingesrOS = await singerModel.find(filter);
+
+  const listTopicsOS = await topicModel.find(filter);
+
+
+  res.send({
+    listSingesrOS: listSingesrOS,
+    listTopicsOS: listTopicsOS
   })
 }
