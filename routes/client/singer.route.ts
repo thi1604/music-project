@@ -5,5 +5,7 @@ const router = express.Router();
 
 router.get("/", controller.index);
 
+router.get("/detail/:slugSinger", controller.detail);
+
 
 export const routerSinger = router;

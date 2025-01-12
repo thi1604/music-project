@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { singerModel } from "../../models/singer.model";
+import { songModel } from "../../models/song.model";
 
 export const index = async (req: Request, res: Response) => {
   let filter = {
@@ -12,4 +13,54 @@ export const index = async (req: Request, res: Response) => {
 
   const listSinger = await singerModel.find(filter);
   res.send(listSinger);
+} 
+
+
+export const detail = async (req: Request, res: Response) => {
+  const singerCurrent = await singerModel.findOne({
+    slug: req.params.slugSinger,
+    deleted: false
+  }).select("fullName avatar description slug");
+
+  if(!singerCurrent){
+    res.send({
+      code: 400,
+      messsages: "Không tồn tại ca sĩ trong hệ thống!"
+    })
+    return;
+  }
+  
+  const dataSongs = [];
+
+  const SongsOfSinger = await songModel.find({
+    singerIds: {$in: [singerCurrent.id]}
+  }).select("slug like listenNumber totalTime avatar title singerIds");
+  
+  for (const item of SongsOfSinger) {
+    const singers = [];
+    for (const singerId of item.singerIds) {
+      const singerCurrent = await singerModel.findOne({
+        _id: singerId,
+        deleted: false
+      }).select("fullName");
+      singers.push(singerCurrent.fullName);
+    }
+    //Tyscript khong cho phep them truong du lieu vao object da khai bao neu khong su dung extension, no van dung cau truc khai bao ban dau
+    let song = {
+      title: item.title,
+      avatar: item.avatar,
+      totalTime: item.totalTime,
+      listenNumber: item.listenNumber,
+      like: item.like,
+      slug: item.slug,
+      listSingers: singers
+    };
+    dataSongs.push(song);
+  }
+
+
+  res.send({
+    singer: singerCurrent,
+    listSongs: dataSongs
+  });
 }

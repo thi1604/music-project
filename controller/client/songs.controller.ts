@@ -23,33 +23,33 @@ export const detail = async (req: Request, res: Response) => {
     return;
   }
 
-  const userLogined = res.locals["user"];
-  if(userLogined){
-    const existLike = await likeSongModel.findOne({
-      userId: userLogined["id"],
-      songId: song.id,
-      deleted: false
-    });
-    const existLove = await loveSongModel.findOne({
-      userId: userLogined["id"],
-      songId: song.id,
-    });
+  // const userLogined = res.locals["user"];
+  // if(userLogined){
+  //   const existLike = await likeSongModel.findOne({
+  //     userId: userLogined["id"],
+  //     songId: song.id,
+  //     deleted: false
+  //   });
+  //   const existLove = await loveSongModel.findOne({
+  //     userId: userLogined["id"],
+  //     songId: song.id,
+  //   });
   
-    if(existLike){
-      song["typeLike"] = "like";
-    }
-    if(existLove){
-      song["loveSong"] = "love";
-    }
-  }
-  const singer = await singerModel.findOne({
-    _id: song.singerId,
+  //   if(existLike){
+  //     song["typeLike"] = "like";
+  //   }
+  //   if(existLove){
+  //     song["loveSong"] = "love";
+  //   }
+  // }
+  const singers = await singerModel.find({
+    _id: {$in: song.singerIds},
     deleted: false
-  }).select("fullName");
+  }).select("fullName slug");
 
   res.send({
     songCurrent: song,
-    singer: singer
+    singer: singers
   })
 }
 
@@ -187,7 +187,6 @@ export const search = async (req: Request, res: Response) => {
       }).select("fullName");
 
       item["singerFullName"] = singer.fullName;
-
       //Tyscript chi dua vao khai bao ban dau de hoat dong cho object, du co them van lay khai bao ban dau neu khong dung cac extension
       const dataSong = {
         title: item.title,
