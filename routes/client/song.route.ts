@@ -13,7 +13,7 @@ route.patch("/like", controller.like);
 
 route.patch("/love", controller.love);
 
-route.get("/search/:type", controller.search);
+route.get("/search/:keyword", controller.search);
 
 route.patch("/listen/:idSong", controller.listenPatch);
 

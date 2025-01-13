@@ -150,79 +150,57 @@ export const love = async (req:Request, res: Response) => {
 };
 
 export const search = async (req: Request, res: Response) => { 
-  
-  const type = req.params.type;
-  
-  const keyword = `${req.query.keyword}`;
 
+  const keyword = `${req.params.keyword}`;
   let songs = [];
-
+  let songsResult = [];
   if(keyword){
-    // let regex = new RegExp(keyword, "i");
     let keywordSlug = keyword;
-
     keywordSlug = keyword.trim();
-
-    keywordSlug = keywordSlug.replace(/\s/g, "-");
-    keywordSlug = keywordSlug.replace(/-+/g, "-"); 
+    keywordSlug = keywordSlug.replace(/\s+/g, "-");
     keywordSlug = unidecode(keywordSlug);
-    // console.log(keywordSlug);
+
     const regexKeyWord = new RegExp(keyword, "i");
     const regexKeyWordSlug = new RegExp(keywordSlug, "i");
-    // console.log(regexKeyWord, regexKeyWordSlug)
-    songs = await songModel.find({
+
+    const singers = await singerModel.find({
       $or: [
-        {title: regexKeyWord}, 
-        {slug: regexKeyWordSlug}
+        {fullName: regexKeyWord},
+        {slug:regexKeyWordSlug}
       ],
       deleted: false,
       status: "active"
-    }).select("title avatar singerId slug");
+    }).select("id");
 
-    let songsResult = [];
+    const listsingersId = singers.map(item => item.id);
+
+    songs = await songModel.find({ //Tim kiem theo bai hat va ca si
+      $or: [
+        {title: regexKeyWord},
+        {slug: regexKeyWordSlug},
+        {singerIds: {$in: listsingersId}} //Tim bai hat co ca si hat bai hat do
+      ],
+      deleted: false,
+      status: "active"
+    }).select("title avatar singerIds slug");
 
     for (const item of songs) {
-      const singer =  await singerModel.findOne({
-        _id: item.singerId
+      const singers =  await singerModel.find({
+        _id: {$in: item.singerIds}
       }).select("fullName");
 
-      item["singerFullName"] = singer.fullName;
+      // item["singerFullName"] = singer.fullName;
       //Tyscript chi dua vao khai bao ban dau de hoat dong cho object, du co them van lay khai bao ban dau neu khong dung cac extension
       const dataSong = {
         title: item.title,
         avatar: item.avatar,
         slug: item.slug,
-        singerFullName: singer.fullName
+        singers: singers
       }
       songsResult.push(dataSong);
     }
-  
-    if(type == "result"){
-      res.render("client/pages/songs/list.pug", {
-        pageTitle: `Kết quả tìm kiếm: ${keyword}`,
-        listSongs: songs
-      });
-    }
-    else if(type == "suggest"){
-      res.json({
-        code: 200,
-        songsFinal: songsResult
-      });
-    }
-    else{
-      res.json({
-        code: 400
-      });
-    }
   }
-  else{
-    res.json({
-      code: 400
-    });
-  }
-
-
-  // res.send("ok");
+  res.send(songsResult);
 }
 
 export const listenPatch = async (req: Request, res: Response) => {
