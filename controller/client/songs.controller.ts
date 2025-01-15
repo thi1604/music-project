@@ -151,7 +151,7 @@ export const love = async (req:Request, res: Response) => {
 
 export const search = async (req: Request, res: Response) => { 
 
-  const keyword = `${req.params.keyword}`;
+  let keyword = `${req.params.keyword}`;
   let songs = [];
   let songsResult = [];
   if(keyword){
@@ -203,7 +203,7 @@ export const search = async (req: Request, res: Response) => {
   res.send(songsResult);
 }
 
-export const listenPatch = async (req: Request, res: Response) => {
+export const listenNumberPatch = async (req: Request, res: Response) => {
   const idSong = req.params.idSong;
   try {
     const song = await songModel.findOne({

@@ -6,7 +6,7 @@ import multer from "multer";
 
 const upload = multer();
 
-router.get("/register", controller.register);
+// router.get("/register", controller.register);
 
 router.post("/register", controller.registerPost);
 

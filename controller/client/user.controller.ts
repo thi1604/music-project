@@ -5,22 +5,50 @@ import md5 from "md5";
 import {generateRandomString, generateRandomNumber} from "../../helper/generate.helper";
 import {sendEmail} from "../../helper/sendEmail.helper";
 
-export const register = async (req:Request, res:Response) => {
-  res.render("client/pages/user/register.pug", {
-    pageTitle: "Trang đăng kí"
-  });
-}
+// export const register = async (req:Request, res:Response) => {
+//   res.render("client/pages/user/register.pug", {
+//     pageTitle: "Trang đăng kí"
+//   });
+// }
 
 export const registerPost = async (req:Request, res:Response) => {
-  if(!req.body.fullName || !req.body.email || !req.body.password){
-    req.flash("error", "Vui lòng nhập đầy đủ thông tin bắt buộc!");
-    res.redirect("back");
+  if(!req.body.fullName || !req.body.email || !req.body.password || !req.body.authenPass){
+    res.json({
+      code: 400,
+      messages: "Thiếu các trường thông tin bắt buộc",
+      flag: 0
+    });
     return;
   }
-  const subEmail = "@";
-  if(!req.body.email.includes(subEmail)){
-    req.flash("error", "Email không đúng định dạng!");
-    res.redirect("back");
+  const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+  //Check email
+  const check = regexEmail.test(req.body.email);
+  if(!check){
+    res.send({
+      code: 400,
+      messager: "Email không đúng định dạng",
+      flag: 1
+    });
+    return;
+  }
+  // Check passwork
+  const regexPass = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/g;
+
+  const checkPass = regexPass.test(req.body.password);
+  if(!checkPass){
+    res.send({
+      code: 400,
+      messager: "Mật khẩu không đúng định dạng!",
+      flag: 2
+    });
+    return;
+  }
+  else if(req.body.password != req.body.authenPass){
+    res.send({
+      code: 400,
+      messager: "Mật khẩu không trùng khớp!",
+      flag: 3
+    });
     return;
   }
   //Check xem email da ton tai hay chua
@@ -29,8 +57,11 @@ export const registerPost = async (req:Request, res:Response) => {
   });
 
   if(existUser){
-    req.flash("error", "Email đã được đăng kí!");
-    res.redirect("back");
+    res.send({
+      code: 400,
+      messager: "Email đã được đăng kí!",
+      flag: 4
+    });
     return;
   }
 
@@ -40,12 +71,17 @@ export const registerPost = async (req:Request, res:Response) => {
   req.body.password = md5(req.body.password);
   
   const user = new userModel(req.body);
-  await user.save();
-  const time = 24 * 3 * 60 * 60 * 1000;
-  res.cookie("tokenUser", user.tokenUser, { expires: new Date(Date.now() + time)});
+  await user.save(); //luu user moi vao csdl
 
-  req.flash("success", "Đăng kí thành công!");
-  res.redirect("/");
+  res.send({
+    code:200,
+    token: tokenUser,
+    messages: "Đăng kí thành công!"
+  })
+  // const time = 24 * 3 * 60 * 60 * 1000;
+  // res.cookie("tokenUser", user.tokenUser, { expires: new Date(Date.now() + time)});
+  // req.flash("success", "Đăng kí thành công!");
+  // res.redirect("/");
 }
 
 export const login = async (req:Request, res:Response) => {
