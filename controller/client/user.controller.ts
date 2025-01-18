@@ -84,11 +84,11 @@ export const registerPost = async (req:Request, res:Response) => {
   // res.redirect("/");
 }
 
-export const login = async (req:Request, res:Response) => {
-  res.render("client/pages/user/login.pug", {
-    pageTitle: "Trang đăng nhập"
-  });
-}
+// export const login = async (req:Request, res:Response) => {
+//   res.render("client/pages/user/login.pug", {
+//     pageTitle: "Trang đăng nhập"
+//   });
+// }
 
 export const loginPost = async (req:Request, res:Response) => {
   const emailCurrent = req.body.email;
@@ -96,29 +96,37 @@ export const loginPost = async (req:Request, res:Response) => {
     email : emailCurrent
   });
   if(!user){
-    req.flash("error", "Sai thông tin email!");
-    res.redirect("back");
+    res.send({
+      code: 400,
+      messages: "Sai thông tin email!",
+      flag: 1
+    });
     return;
   }
-  if(md5(req.body.password) != user.password){
-    req.flash("error", "Sai mật khẩu!");
-    res.redirect("back");
+  const passwork = req.body.passwork;
+  if(md5(passwork) != user.password){
+
+    res.send({
+      code: 400,
+      messages: "Sai mật khẩu!",
+      flag: 2
+    });
     return;
   }
   if(user.status == "inactive" || user.deleted == true){
-    req.flash("error", "Tài khoản đã khóa hoặc đã xóa!");
-    res.redirect("back");
+    res.send({
+      code: 400,
+      messages: "Tài khoản đã khóa hoặc đã xóa!",
+      flag: 3
+    });
     return;
   }
-  req.flash("success", "Đăng nhập thành công!");
-  const time = 24 * 3 * 60 * 60 * 1000;
-  res.cookie("tokenUser", user.tokenUser, { expires: new Date(Date.now() + time)});
-  // res.cookie(
-  //   "cartId", 
-  //   user.cartId, 
-  //   { expire: new Date(Date.now() + time)}
-  // );
-  res.redirect("/");
+  res.send({
+    code: 200,
+    messages: "Đăng nhập thành công!",
+    flag: 4,
+    token: user.tokenUser
+  });
 }
 
 export const detail = async (req:Request, res:Response) => {

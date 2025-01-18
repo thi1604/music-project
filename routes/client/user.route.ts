@@ -10,7 +10,7 @@ const upload = multer();
 
 router.post("/register", controller.registerPost);
 
-router.get("/login", controller.login);
+// router.get("/login", controller.login);
 
 router.post("/login", controller.loginPost);
 
