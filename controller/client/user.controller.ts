@@ -129,23 +129,24 @@ export const loginPost = async (req:Request, res:Response) => {
   });
 }
 
-export const detail = async (req:Request, res:Response) => {
-  // console.log(req.params);
-  if(req.cookies.tokenUser){
-    const idUser = req.params.id;
-    if(idUser != res.locals.user.id){
-      req.flash("error", "Lỗi!");
-      res.redirect("/");
-    }
-    else{
-      res.render("client/pages/profile/index.pug", {
-        pageTitle: "Trang chi tiết tài khoản"
-      });
-    }
-  }
-  else
-    res.redirect("/user/login");
-}
+// Chua lam FE cho trang nay
+// export const detail = async (req:Request, res:Response) => {
+//   // console.log(req.params);
+//   if(req.cookies.tokenUser){
+//     const idUser = req.params.id;
+//     if(idUser != res.locals.user.id){
+//       req.flash("error", "Lỗi!");
+//       res.redirect("/");
+//     }
+//     else{
+//       res.render("client/pages/profile/index.pug", {
+//         pageTitle: "Trang chi tiết tài khoản"
+//       });
+//     }
+//   }
+//   else
+//     res.redirect("/user/login");
+// }
 
 export const editPatch = async (req:Request, res:Response) => {
   if(req.cookies.tokenUser) {
@@ -277,8 +278,10 @@ export const forgotPasswordPost = async (req:Request, res:Response) => {
   });
 
   if(!emailCurrent){
-    req.flash("error","Email không tồn tại trong hệ thống!");
-    res.redirect("back");
+    res.send({
+      code: 400,
+      messages: "Email không tồn tại trong hệ thống!"
+    })
     return;
   }
   //Tao ma otp, gui otp ve mail user
@@ -302,10 +305,14 @@ export const forgotPasswordPost = async (req:Request, res:Response) => {
     email: dataEmail.email
   }).select("id");
 
-  res.cookie("idUser", idUser.id);
+  // res.cookie("idUser", idUser.id);
+  res.send({
+    idUser: idUser.id,
+    email: emailCurrent.email
+  })
 
   // res.send("ok");
-  res.redirect(`/user/password/check-otp?email=${emailCurrent.email}`);
+  // res.redirect(`/user/password/check-otp?email=${emailCurrent.email}`);
 }
 
 export const checkOtp = async (req:Request, res:Response) => {
@@ -316,11 +323,16 @@ export const checkOtp = async (req:Request, res:Response) => {
   });
 }
 
+let emailAuthen : String = "";
+
 export const checkOtpPost = async (req:Request, res:Response) => {
   const {email, otp} = req.body;
-  if(!otp){
-    req.flash("error", "Lỗi!");
-    res.redirect("back");
+  if(!otp || !email){
+    res.send({
+      code: 400,
+      messages: "Thiếu thông tin dữ liệu!",
+      flag: 0
+    });
     return;
   }
   const otpReal = await forgotPasswordModel.findOne({
@@ -329,12 +341,18 @@ export const checkOtpPost = async (req:Request, res:Response) => {
   });
 
   if(!otpReal){
-    req.flash("error", "Mã otp không chính xác!");
-    res.redirect("back");
+    res.send({
+      code: 400,
+      messages: "Mã otp không chính xác!",
+      flag: 1
+    })
     return;
   }
-
-  res.redirect("/user/password/reset-password");
+  emailAuthen = email;
+  res.send({
+    code: 200,
+    messages: "Mã OTP hợp lệ!"
+  })
 }
 
 export const resetPassword = async (req:Request, res:Response) => {
@@ -348,36 +366,52 @@ export const resetPassword = async (req:Request, res:Response) => {
 }
 
 export const resetPasswordPatch = async (req:Request, res:Response) => {
-  if(!req.cookies.idUser){
-    req.flash("error", "Otp đã hết hạn!");
-    res.redirect("/user/password/forgot");
+  if(!req.body.idUser || !req.body.password || !req.body.email){
+    res.send({
+      code: 400,
+      messages: "Thiếu dữ liệu",
+      flag:0
+    });
     return;
   }
-  if(!req.body.password){
-    req.flash("error", "Lỗi!");
-    res.redirect("/user/password/forgot");
+  if(req.body.email != emailAuthen){
+    res.send({
+      flag: 1,
+      messages: "Lỗi!"
+    });
     return;
   }
   // console.log(req.body);
   try {
+    const regexPass = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/g;
+    const check = regexPass.test(req.body.password);
+    if(!check){
+      res.send({
+        flag: 2,
+        messages: "Mật khẩu không đúng định dạng!"
+      })
+      return;
+    }
     const newPassword = md5(req.body.password);
     // console.log(newPassword);
     await userModel.updateOne({
-      _id: req.cookies.idUser
+      _id: req.body.idUser,
     }, {
       password: newPassword
     });
   
     const user = await userModel.findOne({
-      _id: req.cookies.idUser
+      _id: req.body.idUser,
     }).select("tokenUser");
-  
-    req.flash("success", "Mật khẩu của bạn đã được đổi!");
-    res.clearCookie("idUser");
-    const time = 3 * 24 * 60 * 60 * 1000;
-    res.cookie("tokenUser", user.tokenUser, { expires: new Date(Date.now() + time)});
-    res.redirect("/");
+
+    emailAuthen = "";
+    res.send({
+      code: 200,
+      token: user.tokenUser,
+      messages: "Mật khẩu của bạn đã được đổi!"
+    })
   } catch (error) {
+    emailAuthen = req.body.email;
     res.send("403");
   }
 }
