@@ -3,21 +3,29 @@ import { userModel } from "../../models/user.model";
 
 
 export const infoUser = async (req:Request, res:Response, next:NextFunction) => {
-  const idTokenUser = req.cookies.tokenUser;
-  // console.log(idTokenUser);
-  if(idTokenUser){
+  const headers = req.headers;
+  const tokenUser = headers.authorization ? headers.authorization.split(" ")[1] : "";
+  if(tokenUser){
     const user = await userModel.findOne({
-      tokenUser : idTokenUser
+      tokenUser : tokenUser
     });
     if(user){
-      res.locals["user"] = user;
-      // console.log(res.locals.user);
-      // res.cookie(
-      //   "cartId", 
-      //   user.cartId, 
-      //   // { expire: new Date(Date.now() + time)}
-      // );
+      req["tokenUser"] = user.tokenUser;
+      next();
+    }
+    else{
+      res.send({
+        code: 400,
+        messages: "Token không chính xác!"
+      })
+      return;
     }
   }
-  next();
+  else{
+    res.send({
+      code: 400,
+      messages: "Thiếu token!"
+    })
+    return;
+  }
 }

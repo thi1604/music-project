@@ -1,5 +1,6 @@
 import express  from "express";
 const route = express.Router();
+import {infoUser}  from "../../middlewares/client/user-middleware";
 
 import * as controller from "../../controller/client/songs.controller";
 
@@ -8,6 +9,8 @@ import * as controller from "../../controller/client/songs.controller";
 // route.get("/topics/:slug")
 
 route.get("/detail/:slugSong", controller.detail);
+
+route.get(`/love-songs`, infoUser, controller.loveSongs);
 
 route.patch("/like", controller.like);
 

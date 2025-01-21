@@ -57,8 +57,7 @@ export const detail = async (req: Request, res: Response) => {
     };
     dataSongs.push(song);
   }
-
-
+  
   res.send({
     singer: singerCurrent,
     listSongs: dataSongs

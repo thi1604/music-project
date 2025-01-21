@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { songModel } from "../../models/song.model";
 import { singerModel } from "../../models/singer.model";
-import { topicModel } from "../../models/topics.model";
 import { likeSongModel } from "../../models/like-song.model";
 import { loveSongModel } from "../../models/love-song.model";
 import unidecode from "unidecode";
+import { userModel } from "../../models/user.model";
 
 export const detail = async (req: Request, res: Response) => {
   const slugSong : string = req.params.slugSong;
@@ -52,6 +52,47 @@ export const detail = async (req: Request, res: Response) => {
     singer: singers
   })
 }
+
+export const loveSongs = async (req: Request, res: Response) => {
+  
+  const User = await userModel.findOne({
+    tokenUser: req["tokenUser"]
+  }).select("tokenUser");
+
+  let listSongIds: any[] = [];
+  listSongIds = await loveSongModel.find({
+    userId: User.id
+  });
+
+  const songsResult : any[] = [];
+
+  for (const item of listSongIds) {
+    try {
+      const song = await songModel.findOne({
+          _id: item.songId,
+          deleted: false
+      });
+      if(song){ //Check xem bai hat do con hoat dong hay khong roi moi push vao
+        const singers = await singerModel.find({
+          _id: {$in: song.singerIds}
+        }).select("fullName slug");
+  
+        const dataSong = {
+          title: song.title,
+          avatar: song.avatar,
+          totalTime: song.totalTime,
+          slug: song.slug,
+          singers: singers
+        }
+        songsResult.push(dataSong);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  res.send(songsResult);
+}
+
 
 export const like = async (req:Request, res: Response) => {
   try {

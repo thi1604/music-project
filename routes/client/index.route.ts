@@ -7,7 +7,7 @@ import { routerSinger } from "./singer.route";
 
 
 export const routesClient = (app) => {
-  app.use(infoUser);
+  // app.use(infoUser);
   app.use("/", routeHome);
   app.use("/topics", routeTopics);
   app.use("/songs", routeSong);
