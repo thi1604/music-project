@@ -10,6 +10,8 @@ import * as controller from "../../controller/client/songs.controller";
 
 route.get("/detail/:slugSong", controller.detail);
 
+route.get("/topSongs", controller.topSongs);
+
 route.get(`/love-songs`, infoUser, controller.loveSongs);
 
 route.patch("/like", controller.like);

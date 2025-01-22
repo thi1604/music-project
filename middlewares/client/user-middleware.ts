@@ -14,7 +14,7 @@ export const infoUser = async (req:Request, res:Response, next:NextFunction) => 
       next();
     }
     else{
-      res.send({
+      res.json({
         code: 400,
         messages: "Token không chính xác!"
       })
@@ -22,7 +22,7 @@ export const infoUser = async (req:Request, res:Response, next:NextFunction) => 
     }
   }
   else{
-    res.send({
+    res.json({
       code: 400,
       messages: "Thiếu token!"
     })

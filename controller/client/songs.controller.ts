@@ -16,7 +16,7 @@ export const detail = async (req: Request, res: Response) => {
   }).select("-status -deleted");
 
   if(!song){
-    res.send({
+    res.json({
       code: 400,
       messages: "Bài hát không tồn tại trong hệ thống!"
     })
@@ -47,14 +47,39 @@ export const detail = async (req: Request, res: Response) => {
     deleted: false
   }).select("fullName slug");
 
-  res.send({
+  res.json({
     songCurrent: song,
     singer: singers
   })
 }
 
+export const topSongs = async (req: Request, res: Response) => {
+  const listTopSongs = await songModel.find({
+  }).sort({listenNumber: "desc"}).limit(3).select("title avatar singerIds slug listenNumber");
+  const dataFinal = [];
+  for (const item of listTopSongs) {
+    const singers =  await singerModel.find({
+      _id: {$in: item.singerIds},
+      deleted: false
+    }).select("fullName slug");
+
+    const data = {
+      title: item.title,
+      avatar: item.avatar,
+      slug: item.slug,
+      singers: singers,
+      listenNumber: item.listenNumber
+    }
+    dataFinal.push(data);
+  }
+  res.json({
+    code: 200,
+    dataFinal: dataFinal
+  });
+}
+
 export const loveSongs = async (req: Request, res: Response) => {
-  
+
   const User = await userModel.findOne({
     tokenUser: req["tokenUser"]
   }).select("tokenUser");
@@ -90,7 +115,7 @@ export const loveSongs = async (req: Request, res: Response) => {
       console.log(error);
     }
   }
-  res.send(songsResult);
+  res.json(songsResult);
 }
 
 
@@ -241,7 +266,7 @@ export const search = async (req: Request, res: Response) => {
       songsResult.push(dataSong);
     }
   }
-  res.send(songsResult);
+  res.json(songsResult);
 }
 
 export const listenNumberPatch = async (req: Request, res: Response) => {

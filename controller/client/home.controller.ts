@@ -16,7 +16,7 @@ export const index = async (req: Request, res: Response) =>{
   const listTopicsOS = await topicModel.find(filter);
 
 
-  res.send({
+  res.json({
     listSingesrOS: listSingesrOS,
     listTopicsOS: listTopicsOS
   })

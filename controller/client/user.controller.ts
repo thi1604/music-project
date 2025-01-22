@@ -24,7 +24,7 @@ export const registerPost = async (req:Request, res:Response) => {
   //Check email
   const check = regexEmail.test(req.body.email);
   if(!check){
-    res.send({
+    res.json({
       code: 400,
       messager: "Email không đúng định dạng",
       flag: 1
@@ -36,7 +36,7 @@ export const registerPost = async (req:Request, res:Response) => {
 
   const checkPass = regexPass.test(req.body.password);
   if(!checkPass){
-    res.send({
+    res.json({
       code: 400,
       messager: "Mật khẩu không đúng định dạng!",
       flag: 2
@@ -44,7 +44,7 @@ export const registerPost = async (req:Request, res:Response) => {
     return;
   }
   else if(req.body.password != req.body.authenPass){
-    res.send({
+    res.json({
       code: 400,
       messager: "Mật khẩu không trùng khớp!",
       flag: 3
@@ -57,7 +57,7 @@ export const registerPost = async (req:Request, res:Response) => {
   });
 
   if(existUser){
-    res.send({
+    res.json({
       code: 400,
       messager: "Email đã được đăng kí!",
       flag: 4
@@ -73,7 +73,7 @@ export const registerPost = async (req:Request, res:Response) => {
   const user = new userModel(req.body);
   await user.save(); //luu user moi vao csdl
 
-  res.send({
+  res.json({
     code:200,
     token: tokenUser,
     messages: "Đăng kí thành công!"
@@ -96,7 +96,7 @@ export const loginPost = async (req:Request, res:Response) => {
     email : emailCurrent
   });
   if(!user){
-    res.send({
+    res.json({
       code: 400,
       messages: "Sai thông tin email!",
       flag: 1
@@ -106,7 +106,7 @@ export const loginPost = async (req:Request, res:Response) => {
   const passwork = req.body.passwork;
   if(md5(passwork) != user.password){
 
-    res.send({
+    res.json({
       code: 400,
       messages: "Sai mật khẩu!",
       flag: 2
@@ -114,14 +114,14 @@ export const loginPost = async (req:Request, res:Response) => {
     return;
   }
   if(user.status == "inactive" || user.deleted == true){
-    res.send({
+    res.json({
       code: 400,
       messages: "Tài khoản đã khóa hoặc đã xóa!",
       flag: 3
     });
     return;
   }
-  res.send({
+  res.json({
     code: 200,
     messages: "Đăng nhập thành công!",
     flag: 4,
@@ -278,7 +278,7 @@ export const forgotPasswordPost = async (req:Request, res:Response) => {
   });
 
   if(!emailCurrent){
-    res.send({
+    res.json({
       code: 400,
       messages: "Email không tồn tại trong hệ thống!"
     })
@@ -306,12 +306,12 @@ export const forgotPasswordPost = async (req:Request, res:Response) => {
   }).select("id");
 
   // res.cookie("idUser", idUser.id);
-  res.send({
+  res.json({
     idUser: idUser.id,
     email: emailCurrent.email
   })
 
-  // res.send("ok");
+  // res.json("ok");
   // res.redirect(`/user/password/check-otp?email=${emailCurrent.email}`);
 }
 
@@ -328,7 +328,7 @@ let emailAuthen : String = "";
 export const checkOtpPost = async (req:Request, res:Response) => {
   const {email, otp} = req.body;
   if(!otp || !email){
-    res.send({
+    res.json({
       code: 400,
       messages: "Thiếu thông tin dữ liệu!",
       flag: 0
@@ -341,7 +341,7 @@ export const checkOtpPost = async (req:Request, res:Response) => {
   });
 
   if(!otpReal){
-    res.send({
+    res.json({
       code: 400,
       messages: "Mã otp không chính xác!",
       flag: 1
@@ -349,7 +349,7 @@ export const checkOtpPost = async (req:Request, res:Response) => {
     return;
   }
   emailAuthen = email;
-  res.send({
+  res.json({
     code: 200,
     messages: "Mã OTP hợp lệ!"
   })
@@ -367,7 +367,7 @@ export const resetPassword = async (req:Request, res:Response) => {
 
 export const resetPasswordPatch = async (req:Request, res:Response) => {
   if(!req.body.idUser || !req.body.password || !req.body.email){
-    res.send({
+    res.json({
       code: 400,
       messages: "Thiếu dữ liệu",
       flag:0
@@ -375,7 +375,7 @@ export const resetPasswordPatch = async (req:Request, res:Response) => {
     return;
   }
   if(req.body.email != emailAuthen){
-    res.send({
+    res.json({
       flag: 1,
       messages: "Lỗi!"
     });
@@ -386,7 +386,7 @@ export const resetPasswordPatch = async (req:Request, res:Response) => {
     const regexPass = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/g;
     const check = regexPass.test(req.body.password);
     if(!check){
-      res.send({
+      res.json({
         flag: 2,
         messages: "Mật khẩu không đúng định dạng!"
       })
@@ -405,14 +405,14 @@ export const resetPasswordPatch = async (req:Request, res:Response) => {
     }).select("tokenUser");
 
     emailAuthen = "";
-    res.send({
+    res.json({
       code: 200,
       token: user.tokenUser,
       messages: "Mật khẩu của bạn đã được đổi!"
     })
   } catch (error) {
     emailAuthen = req.body.email;
-    res.send("403");
+    res.json("403");
   }
 }
 

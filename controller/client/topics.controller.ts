@@ -16,7 +16,7 @@ export const index = async (req: Request, res: Response) => {
 
   const listTopics = await topicModel.find(filter);
   
-  res.send(listTopics);
+  res.json(listTopics);
 }
 
 export const songsInTopic = async (req: Request, res: Response) => {
@@ -41,7 +41,7 @@ export const songsInTopic = async (req: Request, res: Response) => {
 
     item["singerFullName"] = singer.fullName || "";
   }
-  res.send({
+  res.json({
     topicCurrent: topicCurrent,
     listSongs: listSongs
   });

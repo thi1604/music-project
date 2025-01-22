@@ -12,7 +12,7 @@ export const index = async (req: Request, res: Response) => {
   }
 
   const listSinger = await singerModel.find(filter);
-  res.send(listSinger);
+  res.json(listSinger);
 } 
 
 
@@ -23,7 +23,7 @@ export const detail = async (req: Request, res: Response) => {
   }).select("fullName avatar description slug");
 
   if(!singerCurrent){
-    res.send({
+    res.json({
       code: 400,
       messsages: "Không tồn tại ca sĩ trong hệ thống!"
     })
@@ -58,7 +58,7 @@ export const detail = async (req: Request, res: Response) => {
     dataSongs.push(song);
   }
   
-  res.send({
+  res.json({
     singer: singerCurrent,
     listSongs: dataSongs
   });
