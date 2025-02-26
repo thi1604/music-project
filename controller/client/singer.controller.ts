@@ -33,7 +33,9 @@ export const detail = async (req: Request, res: Response) => {
   const dataSongs = [];
 
   const SongsOfSinger = await songModel.find({
-    singerIds: {$in: [singerCurrent.id]}
+    singerIds: {$in: [singerCurrent.id]},
+    deleted: false,
+    status: "active"
   }).select("slug like listenNumber totalTime avatar title singerIds audio lyrics");
   
   for (const item of SongsOfSinger) {

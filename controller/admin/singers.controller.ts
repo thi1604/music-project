@@ -91,7 +91,7 @@ export const edit = async (req : Request, res: Response) => {
       });
     }
     else{
-      res.redirect(`/${prefixAdmin}/singers`);
+      res.redirect(`/${prefixAdmin}/singers/edit/${id}`);
     }
 
   }
@@ -111,7 +111,7 @@ export const editPatch = async (req : Request, res: Response) => {
       _id : id
     }, req.body);
     req.flash("success", "Cập nhật thành công !");
-    res.redirect(`/${prefixAdmin}/singers/${id}`);
+    res.redirect(`/${prefixAdmin}/singers/edit/${id}`);
   // }
   // else{
   //   res.send("403");
