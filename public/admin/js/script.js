@@ -1,3 +1,93 @@
+
+// filter products
+
+const listProducts = document.querySelectorAll("[button-status]");
+let url = new URL(window.location.href);
+
+listProducts.forEach((item)=>{
+  item.addEventListener("click", ()=>{
+    const status = item.getAttribute("button-status");
+    url.searchParams.delete("page"); //Neu loc trang thai san pham, mac dinh show tu trang 1 
+    if(status != ""){
+      url.searchParams.set("status", status);
+    }
+    else{
+      url.searchParams.delete("status");
+    }
+    window.location.href = url;
+  });
+});
+
+
+//Choose checkbox for change status all item
+
+const changeAll = document.querySelector(`input[change-status-all]`);
+const listItem = document.querySelectorAll(`input[change-status-item]`);
+if(changeAll){
+  changeAll.addEventListener("click", ()=>{
+    const check = changeAll.checked;
+    listItem.forEach((item)=>{
+      item.checked = check;
+    });
+  });
+}
+
+//Check all item. If true, changeAll has checked = true
+const lengthAll = listItem.length;
+
+listItem.forEach(item => {
+  item.addEventListener("click", ()=> {
+    const checkedListItem = document.querySelectorAll(`input[change-status-item]:checked`);
+    if(lengthAll == checkedListItem.length){
+      changeAll.checked = true;
+    }
+    else
+      changeAll.checked = false;
+  });
+});
+
+//End Choose checkbox for change status all item
+
+
+//Change many Item from checkbox
+const divActive = document.querySelector("div[change-many-items]");
+if(divActive){
+  const select = divActive.querySelector("select");
+  const button = divActive.querySelector("button");
+  // const checkedListItem = document.querySelectorAll(`input[change-status-item]:checked`);
+  button.addEventListener("click", () => {
+    const checkedListItem = document.querySelectorAll(`input[change-status-item]:checked`);
+    const ids = [];
+    if(select.value != "" && checkedListItem.length > 0){
+      checkedListItem.forEach((item) => {
+        ids.push(item.getAttribute("value"));
+      });
+
+      const dataChange = {
+        ids : ids,
+        status : select.value
+      }
+      console.log(dataChange);
+      const link = divActive.getAttribute("link");
+      fetch(link, {
+        method : "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        }, 
+        body: JSON.stringify(dataChange)
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == 200)
+            window.location.reload();
+        })
+    } 
+    else
+      alert("Chưa chọn sản phẩm và hành động!");
+  });
+}
+
+
 // Upload Image
 const uploadImage = document.querySelector("[upload-image]");
 if(uploadImage) {

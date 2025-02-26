@@ -1,0 +1,12 @@
+mixin box-actions(link, listActions)
+  div(
+    change-many-items
+    link = link
+  )
+    .input-group
+      select()
+        option(value='') Choose...
+        for item in listActions
+          option(value= `${item.status}`) #{item.label}
+      .input-group-append
+        button.btn.btn-outline-secondary(type='button') Áp dụng

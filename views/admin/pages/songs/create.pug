@@ -24,6 +24,8 @@ block main
           required
         )
           option(value="" disabled selected) -- Chọn chủ đề --
+          each item in topics
+            option(value=item.id) #{item.title}
       div(class="form-group")
         label(for="singer") Ca sĩ (Giữ ctrl để chọn nhiều ca sĩ)
         select(
@@ -33,9 +35,9 @@ block main
           required
           multiple
         )
+          option(value="" disabled selected ) -- Chọn ca sĩ --
           each item in singers
             option(value=item.id) #{item.fullName}
-        
       div(
         class="form-group"
         upload-image

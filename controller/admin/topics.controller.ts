@@ -115,6 +115,7 @@ export const editPatch = async (req : Request, res: Response) => {
   //   res.send("403");
   // }
 }
+
 export const detail = async (req : Request, res: Response) =>{
   try {
     const id = req.params.id;

@@ -9,10 +9,11 @@ const route = express.Router();
 
 route.get("", controller.index);
 
-// route.get("/detail/:id", controller.detail);
+route.get("/detail/:id", controller.detail);
 
-// route.get("/edit/:id", controller.edit);
-
+route.get("/edit/:id", controller.edit);
+// upload.single('thumbnail'), uploadtoCloud.uploadtoCloud,
+route.patch("/edit/:id", upload.single('avatar'), uploadtoCloud, controller.editPatch);
 route.get("/create", controller.create);
 
 route.patch("/change-status/:id/:status", controller.changeStatus);
@@ -23,5 +24,7 @@ route.post(
   uploadFieldsToCloud, 
   controller.createPost
 );
+
+route.patch("/change-many-status", controller.changeManyStatus);
 
 export const routeSong = route;

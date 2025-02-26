@@ -12,7 +12,6 @@ import { routesAdmin } from "./routes/admin/index.route";
 import path from "path";
 import cors from "cors";
 
-
 dotenv.config();
 
 const app : Express = express();
