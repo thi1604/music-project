@@ -6,7 +6,6 @@ import { topicModel } from "../../models/topics.model";
 
 export const index = async (req:Request, res: Response) => {
   const songs = await songModel.find({
-    status: "active",
     deleted: false
   });
 
@@ -16,6 +15,69 @@ export const index = async (req:Request, res: Response) => {
   });
 };
 
+// export const detail = async (req:Request, res: Response) => {
+//   try {
+//     const id = req.params.id;
+//     const item = await songModel.findOne({
+//       _id : id
+//     });
+  
+//     item.formatCreatedAt = moment(item.createdAt).format("HH:mm:ss DD/MM/YY");
+//     item.formatUpdatedAt = moment(item.updatedAt).format("HH:mm:ss DD/MM/YY");
+  
+  
+//     //Lay ra nguoi tao
+//     const account = await Account.findOne({
+//       _id: item.idPersonCreated
+//     }).select("fullName");
+//     //Het lay ra nguoi tao
+  
+//     //Lay ra nguoi updated
+//     const accountUpdated = await Account.findOne({
+//       _id: item.idPersonUpdated
+//     }).select("fullName");
+//     //End lay ra nguoi updated
+  
+//     if(accountUpdated){
+//       item.namePersonUpdated = accountUpdated.fullName;
+//     }
+//     if(account){
+//       item.namePersonCreated = account.fullName;
+//     }
+    
+//     res.render(`${prefix}/pages/products/detail.pug`,{
+//       pageTitle: "Chi tiết sản phẩm",
+//       product : item
+//     });
+//   } catch (error) {
+//     res.send("403");
+//   }
+// }
+
+// export const edit = async (req:Request, res: Response) => {
+//   try{
+//     const id = req.params.id;
+//     const item = await songModel.findOne({
+//       _id : id
+//     });
+    
+//     const listCategory = await categoryModel.find({
+//       deleted: false,
+//       status: "active"
+//     });
+  
+//     const treeCategory = helperTree(listCategory);
+  
+
+//     res.render("admin/pages/products/edit.pug", {
+//       pageTitle: "Trang chỉnh sửa sp",
+//       product: item,
+//       treeCategory: treeCategory
+//     });
+//   }catch{
+//     res.redirect(`/${prefix}/product`);
+//   }
+// }
 
 export const create = async (req:Request, res: Response) => {
   const topics = await topicModel.find({
@@ -58,3 +120,26 @@ export const createPost = async (req:Request, res: Response) => {
   }
   res.redirect(`/${prefixAdmin}/songs/create`);
 };
+
+export const changeStatus = async (req:Request, res: Response) => {
+  try{
+    //req.params lay cac gia tri dong trong cai link, tra ve ob
+    const {id, status} = req.params;
+
+    await songModel.updateOne(
+      {
+        _id : id
+      }, 
+      {
+        status : status
+      }
+    );
+    req.flash('success', 'Cập nhật thành công!');
+    res.json({
+      code: 200
+    });
+    //Tra data ve cho FE, code duoi tra ve 1 ob 
+  }catch(error){
+    res.redirect(`/${prefixAdmin}/product`);
+  }
+}

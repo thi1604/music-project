@@ -40,15 +40,17 @@ block main
                 //- td Dữ liệu chủ đề
                 td
                   if (item.status === "active")
-                    a(
-                      href="javascript:;"
+                    button(
+                      link =`/${prefixAdmin}/songs/change-status/${item.id}/inactive`
                       class="badge badge-success"
-                    ) Hoạt động
-                  else
-                    a(
-                      href="javascript:;"
+                      button-change-status
+                    ) Hoạt động 
+                  else 
+                    button(
+                      link =`/${prefixAdmin}/songs/change-status/${item.id}/active` 
                       class="badge badge-danger"
-                    ) Dừng hoạt động
+                      button-change-status 
+                    ) Dừng hoạt động 
                 td
                   a(
                     class="btn btn-secondary btn-sm"

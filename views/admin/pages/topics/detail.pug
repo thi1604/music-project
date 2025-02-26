@@ -1,0 +1,37 @@
+extends ../../layouts/default.pug
+
+block main
+  if(role.permissions.includes("products-category_view"))
+    if (product.title)
+      h1(class="mb-4") #{product.title}
+
+    if (product.description)
+      div(class="mb-4") Mô tả: <b>#{product.description}$</b>
+
+    if (product.parent_id)
+      div(class="mb-4") Danh mục cha: <b>#{product.parent_id}</b>
+
+    if (product.position)
+      div(class="mb-4") Vị trí: <b>#{product.position}</b>
+
+    if (product.thumbnail)
+      div(class="mb-4")
+        img(
+          src=product.thumbnail
+          style="width: 100px"
+        )
+
+    if (product.status)
+      div(class="mb-4")
+        span Trạng thái:
+        if (product.status === "active")
+          span(class="badge badge-success") Hoạt động
+        else
+          span(class="badge badge-danger") Dừng hoạt động
+
+    if(product.createdAt)
+      div(class="mb-4") Tạo bởi: <b>#{product.namePersonCreated}</b>
+      div(class="mb-4") Thời gian tạo: <b> #{product.formatCreatedAt}</b>
+    if(product.updatedAt)
+      div(class="mb-4") Người sửa gần nhất: <b> #{product.namePersonUpdated}</b>
+      div(class="mb-4") Thời gian sửa: <b> #{product.formatUpdatedAt}</b>

@@ -9,7 +9,13 @@ const route = express.Router();
 
 route.get("", controller.index);
 
+// route.get("/detail/:id", controller.detail);
+
+// route.get("/edit/:id", controller.edit);
+
 route.get("/create", controller.create);
+
+route.patch("/change-status/:id/:status", controller.changeStatus);
 
 route.post(
   "/create", 
