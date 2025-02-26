@@ -5,7 +5,8 @@ import { topicModel } from "../../models/topics.model";
 
 export const index = async (req: Request, res: Response) => {
   let filter = {
-    deleted: false
+    deleted: false,
+    status: "active"
   }
 
   // console.log(req.query.outStanding)
@@ -25,24 +26,45 @@ export const songsInTopic = async (req: Request, res: Response) => {
   }).select("id title avatar description");
 
   let listSongs = [];
+  let listSongsFinal = [];
 
   if(topicCurrent){
     listSongs = await songModel.find({
       topicId: topicCurrent.id,
-      deleted: false
+      deleted: false,
+      status: "active"
     });
   }
 
-  for (const item of listSongs) {
-    const singer =  await singerModel.findOne({
-      _id: item.singerId,
-      deleted: false
-    }).select("fullName");
-
-    item["singerFullName"] = singer.fullName || "";
+  if(listSongs.length > 0){
+    for (const item of listSongs) {
+      try {
+        const singers =  await singerModel.find({
+          _id: {$in: item.singerIds},
+          deleted: false,
+          status: "active"
+        }).select("fullName slug");
+    
+        const data = {
+          title: item.title,
+          avatar: item.avatar,
+          slug: item.slug,
+          singers: singers,
+          lyric: item.lyrics,
+          like: item.like,
+          totalTime: item.totalTime,
+          audio: item.audio,
+          listenNumber: item.listenNumber
+        }
+        listSongsFinal.push(data);
+      } catch (error) {
+        res.json("Error!");
+      }
+    }
   }
+  // console.log(listSongs);
   res.json({
     topicCurrent: topicCurrent,
-    listSongs: listSongs
+    listSongs: listSongsFinal
   });
 }

@@ -13,7 +13,7 @@ const songSchema = new mongoose.Schema({
   lyrics: String,
   listenNumber: {
     type: Number,
-    default: 0
+    default: 1
   },
   audio: String,
   status: String,

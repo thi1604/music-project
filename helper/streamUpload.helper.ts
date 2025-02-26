@@ -16,6 +16,7 @@ export const streamUpload = (buffer) => {
     },
       (error, result) => {
         if (result) {
+          console.log(result.duration)
           resolve(result);
         } else {
           reject(error);

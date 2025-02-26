@@ -12,15 +12,21 @@ route.get("/detail/:slugSong", controller.detail);
 
 route.get("/topSongs", controller.topSongs);
 
-route.get(`/love-songs`, infoUser, controller.loveSongs);
+route.patch(`/love-songs`, infoUser, controller.loveSongs);
 
 route.patch("/like", controller.like);
 
-route.patch("/love", controller.love);
+route.patch("/love", infoUser, controller.love);
+
+route.patch("/check-love-song", controller.checkLoveSong);
 
 route.get("/search/:keyword", controller.search);
 
-route.patch("/listen/:idSong", controller.listenNumberPatch);
+route.patch("/random", controller.randomSong);
+
+// route.patch("/randomLogin", infoUser, controller.randomSongLogin)
+
+route.patch("/listen/:slugSong", controller.listenNumberPatch);
 
 
 export const routeSong = route;

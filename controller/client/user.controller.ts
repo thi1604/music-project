@@ -4,12 +4,35 @@ import {userModel} from "../../models/user.model";
 import md5 from "md5";
 import {generateRandomString, generateRandomNumber} from "../../helper/generate.helper";
 import {sendEmail} from "../../helper/sendEmail.helper";
+import { checkOTPSModel } from "../../models/checkOTP.model";
+import { love } from "./songs.controller";
+import { loveSongModel } from "../../models/love-song.model";
 
-// export const register = async (req:Request, res:Response) => {
-//   res.render("client/pages/user/register.pug", {
-//     pageTitle: "Trang đăng kí"
-//   });
-// }
+export const authenToken = async (req:Request, res:Response) => {
+  const tokenCurrent = req.body.value;
+  // console.log(tokenCurrent);
+  const user = await userModel.findOne({
+    tokenUser: tokenCurrent,
+    deleted: false,
+    status: "active"
+  }).select("-email -password");
+  if(user){
+    res.json({
+      code: 200,
+      messages: "token hop le!"
+    })
+  }
+  else {
+    res.json({
+      code: 400,
+      messages: "token khong hop le!"
+    })
+  }
+  // res.json({
+  //   code: 200,
+  //   messages: "token khong hop le!"
+  // })
+}
 
 export const registerPost = async (req:Request, res:Response) => {
   if(!req.body.fullName || !req.body.email || !req.body.password || !req.body.authenPass){
@@ -26,7 +49,7 @@ export const registerPost = async (req:Request, res:Response) => {
   if(!check){
     res.json({
       code: 400,
-      messager: "Email không đúng định dạng",
+      messages: "Email không đúng định dạng",
       flag: 1
     });
     return;
@@ -38,7 +61,7 @@ export const registerPost = async (req:Request, res:Response) => {
   if(!checkPass){
     res.json({
       code: 400,
-      messager: "Mật khẩu không đúng định dạng!",
+      messages: "Mật khẩu không đúng định dạng!",
       flag: 2
     });
     return;
@@ -46,7 +69,7 @@ export const registerPost = async (req:Request, res:Response) => {
   else if(req.body.password != req.body.authenPass){
     res.json({
       code: 400,
-      messager: "Mật khẩu không trùng khớp!",
+      messages: "Mật khẩu không trùng khớp!",
       flag: 3
     });
     return;
@@ -59,7 +82,7 @@ export const registerPost = async (req:Request, res:Response) => {
   if(existUser){
     res.json({
       code: 400,
-      messager: "Email đã được đăng kí!",
+      messages: "Email đã được đăng kí!",
       flag: 4
     });
     return;
@@ -72,6 +95,11 @@ export const registerPost = async (req:Request, res:Response) => {
   
   const user = new userModel(req.body);
   await user.save(); //luu user moi vao csdl
+  const otp = new checkOTPSModel({
+    userId: user.id
+  });
+
+  await otp.save(); //Dung de su dung chuc nang quen mat khau
 
   res.json({
     code:200,
@@ -92,6 +120,7 @@ export const registerPost = async (req:Request, res:Response) => {
 
 export const loginPost = async (req:Request, res:Response) => {
   const emailCurrent = req.body.email;
+  // console.log(req.body);
   const user = await userModel.findOne({
     email : emailCurrent
   });
@@ -103,8 +132,8 @@ export const loginPost = async (req:Request, res:Response) => {
     });
     return;
   }
-  const passwork = req.body.passwork;
-  if(md5(passwork) != user.password){
+  const password = req.body.password;
+  if(md5(password) != user.password){
 
     res.json({
       code: 400,
@@ -129,24 +158,36 @@ export const loginPost = async (req:Request, res:Response) => {
   });
 }
 
-// Chua lam FE cho trang nay
-// export const detail = async (req:Request, res:Response) => {
-//   // console.log(req.params);
-//   if(req.cookies.tokenUser){
-//     const idUser = req.params.id;
-//     if(idUser != res.locals.user.id){
-//       req.flash("error", "Lỗi!");
-//       res.redirect("/");
-//     }
-//     else{
-//       res.render("client/pages/profile/index.pug", {
-//         pageTitle: "Trang chi tiết tài khoản"
-//       });
-//     }
-//   }
-//   else
-//     res.redirect("/user/login");
-// }
+
+export const detailUser = async (req:Request, res:Response) => {
+  const user = await userModel.findOne({
+    tokenUser: req.body.tokenUser,
+    deleted: false,
+    status: "active"
+  }).select("-password");
+  if(user){
+    const numberLoveSong = await loveSongModel.find({
+      userId: user.id
+    })
+    const dataUser = {
+      fullName: user.fullName,
+      email: user.email,
+      tokenUser: user.tokenUser,
+      avatar: user.avatar,
+      numberLoveSong : numberLoveSong.length
+    }
+    res.json({
+      code: 200,
+      user: dataUser
+    })
+  }
+  else{
+    res.json({
+      code: 400,
+      messages: "Không tồn tại user!"
+    })
+  }
+}
 
 export const editPatch = async (req:Request, res:Response) => {
   if(req.cookies.tokenUser) {
@@ -224,6 +265,65 @@ export const changePasswordPatch = async (req:Request, res:Response) => {
   }
   else {
     res.redirect("/user/login");
+  }
+}
+
+export const changeInfo = async (req:Request, res:Response) => {
+  // console.log(req.params.type, req.body.dataChange);
+  const type = req.params.type;
+  const dataChange = req.body.dataChange;
+  if((type == "email" || type == "text") && dataChange){
+    if(type == "email"){
+      const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+    //Check email
+      const check = regexEmail.test(dataChange);
+      if(!check){
+        res.send({
+          code: 400,
+          messages: "Email không đúng định dạng"
+        })
+      }
+      else{
+        //Kiem tra email da ton tai chua
+        const existUser = await userModel.findOne({
+          tokenUser: req.body.tokenUser
+        });
+        if(existUser){
+          res.send({
+            code: 400,
+            messages: "Email này đã được đăng kí!"
+          })
+        }
+        else{ //Cap nhat email moi
+          await userModel.updateOne({
+            tokenUser: req.body.tokenUser
+          },{
+            email: dataChange
+          })
+          res.send({
+            code: 200,
+            messages: "Cập nhật thành công!"
+          })
+        }
+      }
+    }
+    else{ //Cap nhat fullName user
+      await userModel.updateOne({
+        tokenUser: req.body.tokenUser
+      },{
+        fullName: dataChange
+      })
+      res.send({
+        code: 200,
+        messages: "Cập nhật thành công!"
+      })
+    }
+  }
+  else{
+    res.send({
+      code: 400,
+      messages: "Lỗi"
+    })
   }
 }
 
@@ -307,6 +407,7 @@ export const forgotPasswordPost = async (req:Request, res:Response) => {
 
   // res.cookie("idUser", idUser.id);
   res.json({
+    code: 200,
     idUser: idUser.id,
     email: emailCurrent.email
   })
@@ -349,6 +450,17 @@ export const checkOtpPost = async (req:Request, res:Response) => {
     return;
   }
   emailAuthen = email;
+
+  const user = await userModel.findOne({
+    email: email,
+    status: "active",
+    deleted: false
+  });
+  
+  await checkOTPSModel.updateOne(
+    {userId: user.id},
+    {isGetOTP: true}
+  );
   res.json({
     code: 200,
     messages: "Mã OTP hợp lệ!"
@@ -366,25 +478,36 @@ export const resetPassword = async (req:Request, res:Response) => {
 }
 
 export const resetPasswordPatch = async (req:Request, res:Response) => {
-  if(!req.body.idUser || !req.body.password || !req.body.email){
+  if(!req.body.idUser || !req.body.password || !req.body.email || !req.body.passwordAuthen){
     res.json({
       code: 400,
-      messages: "Thiếu dữ liệu",
+      messages: "Thiếu dữ liệu!",
       flag:0
     });
     return;
   }
-  if(req.body.email != emailAuthen){
-    res.json({
-      flag: 1,
-      messages: "Lỗi!"
-    });
-    return;
-  }
-  // console.log(req.body);
   try {
+    const checkUserIsGetOtp = await checkOTPSModel.findOne({
+      userId: req.body.idUser,
+      isGetOTP: true
+    });
+    if(req.body.password != req.body.passwordAuthen){
+      res.json({
+        code: 400,
+        messages: "Mật khẩu không trùng nhau!"
+      });
+      return;
+    }
+    if(!checkUserIsGetOtp){
+      res.json({
+        code: 400,
+        messages: "Lỗi!",
+        flag: 3
+      })
+      return;
+    }
     const regexPass = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/g;
-    const check = regexPass.test(req.body.password);
+    const check =  regexPass.test(req.body.password);
     if(!check){
       res.json({
         flag: 2,
@@ -399,7 +522,12 @@ export const resetPasswordPatch = async (req:Request, res:Response) => {
     }, {
       password: newPassword
     });
-  
+
+    await checkOTPSModel.updateOne(
+      {userId: req.body.idUser},
+      {isGetOTP: false}
+    );
+
     const user = await userModel.findOne({
       _id: req.body.idUser,
     }).select("tokenUser");
@@ -412,7 +540,10 @@ export const resetPasswordPatch = async (req:Request, res:Response) => {
     })
   } catch (error) {
     emailAuthen = req.body.email;
-    res.json("403");
+    res.json({
+      code: 403,
+      messages: "Lỗi!"
+    });
   }
 }
 

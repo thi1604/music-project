@@ -37,6 +37,13 @@ export const create = async (req:Request, res: Response) => {
 };
 
 export const createPost = async (req:Request, res: Response) => {
+  const totalSecond = parseFloat(req.body["duration"]);
+  const minutes = Math.floor(totalSecond / 60);
+  const second = Math.floor(totalSecond % 60);
+  const totalTime = `${String(minutes).padStart(2, "0")}:${String(second).padStart(2, "0")}`;
+  req.body["totalTime"] = totalTime;
+  // req.body["lyrics"] = req.body["lyrics"].join('\n');
+  console.log(req.body);
   if(req.body.audio){
     if(req.body.avatar){
       req.body.avatar = req.body.avatar[0];

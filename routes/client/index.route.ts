@@ -2,7 +2,7 @@ import { routeSong } from "./song.route";
 import { routeTopics } from "./topics.route"
 import { routeUser } from "./user.route";
 import { routeHome } from "./home.route";
-import { infoUser } from "../../middlewares/client/user-middleware";
+// import { infoUser } from "../../middlewares/client/user-middleware";
 import { routerSinger } from "./singer.route";
 
 

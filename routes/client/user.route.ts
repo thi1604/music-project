@@ -3,6 +3,7 @@ const router = express.Router();
 import * as controller from "../../controller/client/user.controller";
 import {uploadtoCloud} from "../../middlewares/admin/uploadCloud.middlewares";
 import multer from "multer";
+import { infoUser } from "../../middlewares/client/user-middleware";
 
 const upload = multer();
 
@@ -27,6 +28,8 @@ router.patch(
  
 router.get("/change-password", controller.changePassword);
 
+router.patch("/authenToken", controller.authenToken);
+
 router.patch("/change-password", controller.changePasswordPatch);
 
 router.get("/change-password/check-otp", controller.changePasswordCheckOtp);
@@ -36,6 +39,10 @@ router.patch("/change-password/check-otp", controller.changePasswordCheckOtpPatc
 // router.get("/detail/change-password/check-otp", controller.checkOtp);
 
 // router.get("/password/forgot", controller.forgotPassword);
+
+router.patch("/detail", infoUser, controller.detailUser);
+
+router.patch("/change-info/:type", infoUser, controller.changeInfo);
 
 router.post("/password/forgot", controller.forgotPasswordPost);
 

@@ -29,12 +29,13 @@ block main
       div(class="form-group")
         label(for="singer") Ca sĩ
         select(
-          name="singerId"
+          name="singerIds"
           id="singer"
           class="form-control"
           required
+          multiple
         )
-          option(value="" disabled selected) -- Chọn ca sĩ --
+          option(value="" disabled selected ) -- Chọn ca sĩ --
           each item in singers
             option(value=item.id) #{item.fullName}
       div(
@@ -79,6 +80,15 @@ block main
           name="description"
           rows="5"
           textarea-mce
+        )
+      div(class="form-group")
+        label(for="desc") Lời bài hát
+        textarea(
+          type="text"
+          class="form-control"
+          id="lyrics"
+          name="lyrics"
+          rows="5"
         )
       div(class="form-group form-check form-check-inline")
         input(

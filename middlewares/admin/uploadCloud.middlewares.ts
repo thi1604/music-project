@@ -21,8 +21,9 @@ export const uploadFieldsToCloud = async (req:Request, res:Response, next:NextFu
       req.body[item] = [];
       for(const subItem of req["files"][item]){
         const result = await streamUpload(subItem.buffer);
-        // console.log(result["url"]);
+        // console.log(result["url"], result["duration"]);
         req.body[item].push(result["url"]);
+        req.body["duration"] = result["duration"];
       }
     }
     next();
