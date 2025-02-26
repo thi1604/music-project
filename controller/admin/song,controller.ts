@@ -230,6 +230,7 @@ export const changeStatus = async (req:Request, res: Response) => {
     res.redirect(`/${prefixAdmin}/product`);
   }
 }
+
 export const changeManyStatus = async (req:Request, res: Response) => {
   // if(res.locals.role.permissions.includes("products_edit")){
     const {ids, status} = req.body;

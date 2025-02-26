@@ -6,19 +6,19 @@ block main
   h1(class="mb-4") #{pageTitle}
 
   form(
-    action=`/${prefixAdmin}/topics/edit/${product.id}?_method=PATCH`
+    action=`/${prefixAdmin}/singers/edit/${product.id}?_method=PATCH`
     method="POST"
     enctype="multipart/form-data"
   )
     div(class="form-group")
-      label(for="title") Tiêu đề
+      label(for="fullName") Tên ca sĩ
       input(
         type="text"
         class="form-control"
-        id="title"
-        name="title"
+        id="fullName"
+        name="fullName"
         requi red
-        value=product.title
+        value=product.fullName
       )
     div(class="form-group")
       label(for="desc") Mô tả
@@ -95,7 +95,7 @@ block main
         class="btn btn-primary"
       ) Cập nhật
       a(
-        href = `/${prefixAdmin}/topics`
+        href = `/${prefixAdmin}/singers`
         class="btn btn-danger ml-5"
       ) Hủy
         

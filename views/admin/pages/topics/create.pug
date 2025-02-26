@@ -47,25 +47,46 @@ block main
         class="image-preview"
         upload-image-preview
       )
-    div(class="form-group form-check form-check-inline")
-      input(
-        type="radio"
-        class="form-check-input"
-        id="statusActive"
-        name="status"
-        value="active"
-        checked
-      )
-      label(for="statusActive" class="form-check-label") Hoạt động
-    div(class="form-group form-check form-check-inline")
-      input(
-        type="radio"
-        class="form-check-input"
-        id="statusInActive"
-        name="status"
-        value="inactive"
-      )
-      label(for="statusInActive" class="form-check-label") Dừng hoạt động
+    div(class="form-group ") Trạng thái nổi bật
+      div(class="form-group form-check form-check-inline ml-3")
+        input(
+          type="radio"
+          class="form-check-input"
+          id="OS"
+          name="outStanding"
+          value="true"
+        )
+        label(for="OS" class="form-check-label") Nổi bật
+      div(class="form-group form-check form-check-inline")
+        input(
+          type="radio"
+          class="form-check-input"
+          id="no-OS"
+          name="outStanding"
+          value="false"
+          checked
+        )
+        label(for="no-OS" class="form-check-label") Không nổi bật
+    div(class="form-group ") Trạng thái hoạt động
+      div(class="form-group form-check form-check-inline ml-3")
+        input(
+          type="radio"
+          class="form-check-input"
+          id="statusActive"
+          name="status"
+          value="active"
+          checked
+        )
+        label(for="statusActive" class="form-check-label") Hoạt động
+      div(class="form-group form-check form-check-inline")
+        input(
+          type="radio"
+          class="form-check-input"
+          id="statusInActive"
+          name="status"
+          value="inactive"
+        )
+        label(for="statusInActive" class="form-check-label") Dừng hoạt động
     div(class="form-group")
       button(
         type="submit"
