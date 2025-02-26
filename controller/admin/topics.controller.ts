@@ -28,11 +28,11 @@ export const index = async (req : Request, res: Response) => {
   });
 }
 
-
 export const changeStatus = async (req : Request, res: Response) => {
   try{
     //req.params lay cac gia tri dong trong cai link, tra ve ob
     const {id, status} = req.params;
+
     await topicModel.updateOne(
       {
         _id : id
@@ -51,119 +51,104 @@ export const changeStatus = async (req : Request, res: Response) => {
   }
 }
 
-// module.exports.create = async (req, res) => {
-//   const record = await ProductCategory.find({
-//     deleted: false
-//   });
+export const create = async (req : Request, res: Response) => {
+  res.render("admin/pages/topics/create.pug", {
+    pageTitle: "Thêm mới danh mục sản phẩm"
 
-//   const categoryTree = selectTreeHelper(record);
+  });
+}
 
-//   res.render("admin/pages/products-category/create.pug", {
-//     pageTitle: "Thêm mới danh mục sản phẩm",
-//     listRecord: record,
-//     categoryTree: categoryTree
-//   });
-// }
+export const createPost = async (req : Request, res: Response) => {
+  // if(res.locals.role.permissions.includes("products-category_create")){
+    // if(req.body.position){
+    //   req.body.position = parseInt(req.body.position);
+    // }
+    // else{
+    //   req.body.position = (await ProductCategory.countDocuments({})) + 1;
+    // }
+    // req.body.idPersonCreated = res.locals.account.id;
+    const newTopics = new topicModel(req.body);
+    req.flash("success", "Thêm danh mục thành công !");
+    await newTopics.save(); // Phai co tu await(Doi luu vao database, ko co se chua kip luu)
+    res.redirect("/admin/topics");
+  // }
+  // else{
+    // res.send("403");
+  // }
+}
 
-// module.exports.createPost = async (req, res) => {
-//   if(res.locals.role.permissions.includes("products-category_create")){
-//     if(req.body.position){
-//       req.body.position = parseInt(req.body.position);
-//     }
-//     else{
-//       req.body.position = (await ProductCategory.countDocuments({})) + 1;
-//     }
-//     req.body.idPersonCreated = res.locals.account.id;
-//     const newCategory = new ProductCategory(req.body);
-//     req.flash("success", "Thêm danh mục thành công !");
-//     await newCategory.save(); // Phai co tu await(Doi luu vao database, ko co se chua kip luu)
-//     res.redirect("/admin/products-category");
-//   }
-//   else{
-//     res.send("403");
-//   }
-// }
+export const edit = async (req : Request, res: Response) => {
+  try{
+    const id = req.params.id;
+    const record = await topicModel.findOne({
+      _id: id
+    });
+    if(record){
+      res.render(`${prefixAdmin}/pages/topics/edit.pug`,{
+        pageTitle: "Trang chỉnh sửa danh mục",
+        product: record
+      });
+    }
+    else{
+      res.redirect(`/${prefixAdmin}/topics`);
+    }
 
-// module.exports.edit = async (req, res) => {
-//   try{
-//     const id = req.params.id;
-//     const record = await ProductCategory.findOne({
-//       _id: id
-//     });
-//     const records = await ProductCategory.find({
-//       deleted: false
-//     });
+  }
+  catch(error){
+    res.redirect(`/${prefixAdmin}/topics`);
+  }
+}
 
-//     const listRecord = selectTreeHelper(records);
-//     if(record){
-//       res.render(`${prefix}/pages/products-category/edit.pug`,{
-//         pageTitle: "Trang chỉnh sửa danh mục",
-//         product: record,
-//         listRecord: listRecord
-//       });
-//     }
-//     else{
-//       res.redirect(`/${prefix}/products-category`);
-//     }
+export const editPatch = async (req : Request, res: Response) => {
+  // if(res.locals.role.permissions.includes("products-category_edit")){
+    const id = req.params.id;
+    // req.body.idPersonUpdated = res.locals.account.id;
 
-//   }
-//   catch(error){
-//     res.redirect(`/${prefix}/products-category`);
-//   }
-// }
-
-// module.exports.editPatch = async (req, res)=> {
-//   if(res.locals.role.permissions.includes("products-category_edit")){
-//     const id = req.params.id;
-//     req.body.idPersonUpdated = res.locals.account.id;
-
-//     await ProductCategory.updateOne(
-//     {
-//       _id : id
-//     }, req.body);
+    await topicModel.updateOne(
+    {
+      _id : id
+    }, req.body);
+    req.flash("success", "Cập nhật thành công !");
+    res.redirect('back');
+  // }
+  // else{
+  //   res.send("403");
+  // }
+}
+export const detail = async (req : Request, res: Response) =>{
+  try {
+    const id = req.params.id;
+    const item = await topicModel.findOne({
+      _id : id
+    });
+  
+    // item.formatCreatedAt = moment(item.createdAt).format("HH:mm:ss DD/MM/YY");
+    // item.formatUpdatedAt = moment(item.updatedAt).format("HH:mm:ss DD/MM/YY");
     
-//     res.redirect('back');
-//   }
-//   else{
-//     res.send("403");
-//   }
-// }
-
-// module.exports.detail = async (req, res)=>{
-//   try {
-    
-//     const id = req.params.id;
-//     const item = await ProductCategory.findOne({
-//       _id : id
-//     });
+    //Lay ra nguoi tao
+    // const accountCreated = await account.findOne({
+    //   _id: item.idPersonCreated
+    // }).select("fullName");
+    //Het lay ra nguoi tao
   
-//     item.formatCreatedAt = moment(item.createdAt).format("HH:mm:ss DD/MM/YY");
-//     item.formatUpdatedAt = moment(item.updatedAt).format("HH:mm:ss DD/MM/YY");
-    
-//     //Lay ra nguoi tao
-//     const accountCreated = await account.findOne({
-//       _id: item.idPersonCreated
-//     }).select("fullName");
-//     //Het lay ra nguoi tao
+    //Lay ra nguoi updated
+    // const accountUpdated = await account.findOne({
+    //   _id: item.idPersonUpdated
+    // }).select("fullName");
+    //End lay ra nguoi updated
   
-//     //Lay ra nguoi updated
-//     const accountUpdated = await account.findOne({
-//       _id: item.idPersonUpdated
-//     }).select("fullName");
-//     //End lay ra nguoi updated
+    // if(accountUpdated){
+    //   item.namePersonUpdated = accountUpdated.fullName;
+    // }
+    // if(accountCreated){
+    //   item.namePersonCreated = accountCreated.fullName;
+    // }
   
-//     if(accountUpdated){
-//       item.namePersonUpdated = accountUpdated.fullName;
-//     }
-//     if(accountCreated){
-//       item.namePersonCreated = accountCreated.fullName;
-//     }
-  
-//     res.render(`${prefix}/pages/products-category/detail.pug`,{
-//       pageTitle: "Chi tiết nhóm quyền",
-//       product : item
-//     });
-//   } catch (error) {
-//     console.log("error");
-//   }
-// }
+    res.render(`${prefixAdmin}/pages/topics/detail.pug`,{
+      pageTitle: "Chi tiết danh mục",
+      product : item
+    });
+  } catch (error) {
+    console.log("error");
+  }
+}
