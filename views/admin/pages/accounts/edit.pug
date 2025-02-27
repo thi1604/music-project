@@ -1,74 +1,56 @@
 extends ../../layouts/default.pug
 
-
 block main
-  //- if(role.permissions.includes("products_edit"))
-  h1(class="mb-4") #{pageTitle}
+  //- if(role.permissions.includes("accounts_edit"))
+  h1(class="mb-4") Chỉnh sửa tài khoản
+
   form(
-    action=`/${prefixAdmin}/songs/edit/${product.id}?_method=PATCH`
+    action=`/${prefixAdmin}/accounts/edit/${Account.id}?_method=PATCH`
     method="POST"
     enctype="multipart/form-data"
   )
     div(class="form-group")
-      label(for="title") Tiêu đề
+      label(for="fullName") Họ tên *
       input(
         type="text"
         class="form-control"
-        id="title"
-        name="title"
+        id="fullName"
+        name="fullName"
         required
-        value=product.title
+        value=Account.fullName
       )
     div(class="form-group")
-      label(for="singer") Ca sĩ (Giữ ctrl để chọn nhiều ca sĩ)
-      select(
-        name="singerIds"
-        id="singer"
+      label(for="email") Email *
+      input(
+        type="email"
         class="form-control"
+        id="email"
+        name="email"
         required
-        multiple
+        value=Account.email
       )
-        each item in singers
-          if (product.singerIds.includes(item.id))
-            option(value=item.id selected) #{item.fullName}
-          else
-            option(value=item.id) #{item.fullName}
     div(class="form-group")
-      label(for="topic") Chủ đề
-      select(
-        name="topicId"
-        id="topic"
+      label(for="password") Mật khẩu
+      input(
+        type="password"
         class="form-control"
-        required
+        id="password"
+        name="password"
       )
-        each item in listTopics
-          if (item.id == product.topicId)
-            option(value=item.id selected) #{item.title}
-          else
-            option(value=item.id) #{item.title}
     div(class="form-group")
-      label(for="desc") Mô tả
-      textarea(
+      label(for="phone") Số điện thoại
+      input(
+        type="text"
         class="form-control"
-        id="desc"
-        name="description"
-        rows="5"
-        textarea-mce
-      ) #{product.description}
-    div(class="form-group")
-        label(for="desc") Lời bài hát
-        textarea(
-          type="text"
-          class="form-control"
-          id="lyrics"
-          name="lyrics"
-          rows="5"
-        ) #{product.lyrics}
+        id="phone"
+        name="phone"
+        value=Account.phone
+      )
     div(
       class="form-group"
       upload-image
     )
-      label(for="avatar") Ảnh
+      label(for="avatar") Avatar
       input(
         type="file"
         class="form-control-file"
@@ -78,37 +60,19 @@ block main
         upload-image-input
       )
       img(
-        src=product.avatar
+        src=Account.avatar
         class="image-preview"
         upload-image-preview
       )
-    div(
-        class="form-group"
-      )
-        label(for="listenNumber") Số lượt nghe
-        input(
-          type="number"
-          class="form-control"
-          id="listenNumber"
-          name="listenNumber"
-          min=0
-          value=product.listenNumber
-        )
-    div(
-        class="form-group"
-        upload-audio
-      )
-        label(for="audio") File âm thanh
-        input(
-          type="file"
-          class="form-control-file"
-          id="audio"
-          name="audio"
-          accept="audio/*"
-          upload-audio-input
-        )
-        audio(controls upload-audio-play class="mt-3")
-          source(src=product.audio)
+    div(class="form-group")
+      label(for="role_id") Phân quyền
+      select(name="role_id" id="role_id" class="form-control")
+        option(disabled) -- Chọn --
+        each item in roles
+          option(
+            value=item.id
+            selected=(item.id == Account.role_id ? true : false)
+          ) #{item.title}
     div(class="form-group form-check form-check-inline")
       input(
         type="radio"
@@ -116,7 +80,7 @@ block main
         id="statusActive"
         name="status"
         value="active"
-        checked=(product.status == "active" ? true : false)
+        checked=(Account.status == "active" ? true : false)
       )
       label(for="statusActive" class="form-check-label") Hoạt động
     div(class="form-group form-check form-check-inline")
@@ -126,7 +90,7 @@ block main
         id="statusInActive"
         name="status"
         value="inactive"
-        checked=(product.status == "inactive" ? true : false)
+        checked=(Account.status == "inactive" ? true : false)
       )
       label(for="statusInActive" class="form-check-label") Dừng hoạt động
     div(class="form-group")
@@ -135,7 +99,6 @@ block main
         class="btn btn-primary"
       ) Cập nhật
       a(
-        href = `/${prefixAdmin}/songs`
+        href=`/${prefixAdmin}/accounts`
         class="btn btn-danger ml-5"
       ) Hủy
-      

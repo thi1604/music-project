@@ -1,9 +1,11 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { prefixAdmin } from "../../config/system";
 import { Pagination } from "../../helper/pagination.helper";
 import { userModel } from "../../models/user.model";
 import md5 from "md5";
 import { accountModel } from "../../models/account.model";
+import { rolesModel } from "../../models/roles.model";
+import { generateRandomString } from "../../helper/generate.helper";
 
 export const index = async (req:Request, res: Response) => {
   
@@ -74,186 +76,203 @@ export const index = async (req:Request, res: Response) => {
 };
 
 
-// export const create = async (req:Request, res: Response) => {
+export const create = async (req :Request, res: Response) => {
+
+  const roles = await rolesModel.find({
+    deleted: false
+  }).select("title");
+
+  res.render("admin/pages/accounts/create.pug", {
+    pageTitle: "Trang tạo mới tài khoản admin",
+    roles: roles
+  });
+}
 
 
-//   res.render("admin/pages/songs/create.pug", {
-//     pageTitle: "Tạo mới admin",
-//     topics: topics,
-//     singers: singer
-//   });
-// };
+export const createPost = async (req :Request, res: Response) => {
+  // if(res.locals.role.permissions.includes("accounts_create")){
+  try {
+    
+    req.body.password = md5(req.body.password);
+    const token = generateRandomString(30);
+    req.body.token = token;
+    // Tim ten nhom quyen cho account
+    const role = await rolesModel.findOne({
+      _id: req.body.role_id,
+      deleted : false
+    }).select("title");
 
-// export const createPost = async (req:Request, res: Response) => {
-//   const totalSecond = parseFloat(req.body["duration"]);
-//   const minutes = Math.floor(totalSecond / 60);
-//   const second = Math.floor(totalSecond % 60);
-//   const totalTime = `${String(minutes).padStart(2, "0")}:${String(second).padStart(2, "0")}`;
-//   req.body["totalTime"] = totalTime;
-//   // req.body["lyrics"] = req.body["lyrics"].join('\n');
-//   console.log(req.body);
-//   if(req.body.audio){
-//     if(req.body.avatar){
-//       req.body.avatar = req.body.avatar[0];
-//     }
-//     req.body.audio = req.body.audio[0];
-//     const newSong = new songModel(req.body);
-//     await newSong.save();
-//     req.flash("success", "Tạo mới thành công!");
-//   }
-//   else{
-//     req.flash("error", "Chưa có file âm thanh!");
-//   }
-//   res.redirect(`/${prefixAdmin}/songs/create`);
-// };
+    req.body.roleName = role.title;
 
-// export const detail = async (req:Request, res: Response) => {
+    // req.body.idPersonCreated = res.locals.account.id;
+
+    const newAccount = new accountModel(req.body);
+    await newAccount.save();
+    req.flash("success", "Tạo thành công!");  
+    res.redirect(`/${prefixAdmin}/accounts`);
+  } catch (error) {
+    console.log(error);
+  }
+  // }
+  // else{
+  //   res.send("403");
+  // }
+}
+
+export const edit = async (req: Request, res: Response) => {
+  try{
+    const id = req.params.id;
+    const Account = await accountModel.findOne({
+      _id: id
+    });
+    if(Account){
+      const roles = await rolesModel.find({
+        deleted: false
+      });
+      res.render("admin/pages/accounts/edit.pug", {
+        pageTitle : "Chỉnh sửa tài khoản",
+        Account: Account,
+        roles: roles
+      })
+    }
+    else{
+      req.flash("error", "Lỗi!");
+      res.redirect(`/${prefixAdmin}/accounts`);
+    }
+  }catch(error){
+    req.flash("error", "Lỗi!");
+    res.redirect(`/${prefixAdmin}/accounts`);
+  }
+}  
+
+export const editPatch = async (req: Request, res: Response) => {
+  // if(res.locals.role.permissions.includes("accounts_edit")){
+    try{
+      const id = req.params.id;
+      const existAdmin = await accountModel.findOne({
+        email: req.body.email,
+        _id: {$ne: id}
+      })
+      if(existAdmin){ //check xem email da duoc dang ki chua
+        req.flash("error", "Email đã tồn tại!");
+        res.redirect(`/${prefixAdmin}/accounts/edit/${id}`);
+      }
+      else{
+        if(req.body.password == ""){
+          delete req.body.password
+        }
+        else
+          req.body.password = md5(req.body.password);
+        // req.body.idPersonUpdated = res.locals.account.id;
+        await accountModel.updateOne({
+          _id: id
+        }, req.body);
+        req.flash("success", "Cập nhật thành công!");
+        res.redirect(`/${prefixAdmin}/accounts/edit/${id}`);
+      }
+    }catch(error){
+      req.flash("error", "Lỗi!");
+      res.redirect(`/${prefixAdmin}/accounts`);
+    }
+  // }
+  // else{
+  //   res.send("403");
+  // }
+}
+
+export const detail = async (req:Request, res: Response)=>{
+  try {
+    const id = req.params.id;
+    const item = await accountModel.findOne({
+      _id : id
+    });
+
+    // item.formatCreatedAt = moment(item.createdAt).format("HH:mm:ss DD/MM/YY");
+    // item.formatUpdatedAt = moment(item.updatedAt).format("HH:mm:ss DD/MM/YY");
+
+
+    //Lay ra nguoi tao
+    // const accountCreated = await account.findOne({
+    //   _id: item.idPersonCreated
+    // }).select("fullName");
+    //Het lay ra nguoi tao
+
+    //Lay ra nguoi updated
+    // const accountUpdated = await account.findOne({
+    //   _id: item.idPersonUpdated
+    // }).select("fullName");
+    //End lay ra nguoi updated
+
+    // if(accountUpdated){
+    //   item.namePersonUpdated = accountUpdated.fullName;
+    // }
+    // if(accountCreated){
+    //   item.namePersonCreated = accountCreated.fullName;
+    // }
+    res.render(`admin/pages/accounts/detail.pug`,{
+      pageTitle: "Chi tiết tài khoản",
+      product : item
+    });
+  } catch (error) {
+    res.redirect(`${prefixAdmin}`);
+  }
+}
+
+// //ChangeStatus
+
+export const changeStatus = async (req: Request, res: Response) => {
+  const {id, status} = req.params;
+  try{
+    const admin = await accountModel.findOne({
+      _id: id
+    });
+    if(admin && (status == "active" || status == "inactive")){
+      await accountModel.updateOne({
+        _id : id
+      }, {
+        status: status
+      });
+      req.flash("success", "Cập nhật thành công!");
+    }
+    else{
+      req.flash("error", "Lỗi!");
+    }
+  }
+  catch(error){
+    req.flash("error", "Lỗi!");
+  }
+
+  res.json({
+    code: 200
+  });
+}
+
+// //End ChangeStatus
+
+// // delete
+// module.exports.deletePatch = async (req, res)=>{
 //   try {
-//     const id = req.params.id;
-//     const item = await userModel.findOne({
-//       _id : id
+//     const id = req.body.idAccount;
+//     const item = account.findOne({
+//       _id: id
 //     });
-  
-//     // item.formatCreatedAt = moment(item.createdAt).format("HH:mm:ss DD/MM/YY");
-//     // item.formatUpdatedAt = moment(item.updatedAt).format("HH:mm:ss DD/MM/YY");
-  
-  
-//     //Lay ra nguoi tao
-//     // const account = await Account.findOne({
-//     //   _id: item.idPersonCreated
-//     // }).select("fullName");
-//     //Het lay ra nguoi tao
-  
-//     //Lay ra nguoi updated
-//     // const accountUpdated = await Account.findOne({
-//     //   _id: item.idPersonUpdated
-//     // }).select("fullName");
-//     //End lay ra nguoi updated
-  
-//     // if(accountUpdated){
-//     //   item.namePersonUpdated = accountUpdated.fullName;
-//     // }
-//     // if(account){
-//     //   item.namePersonCreated = account.fullName;
-//     // }
-    
-//     res.render(`${prefixAdmin}/pages/users/detail.pug`,{
-//       pageTitle: "Chi tiết người dùng",
-//       product : item
-//     });
-//   } catch (error) {
-//     res.send("403");
-//   }
-// }
-
-// export const edit = async (req:Request, res: Response) => {
-//   try{
-//     const id = req.params.id;
-//     const item = await userModel.findOne({
-//       _id : id
-//     });
-    
-//     res.render("admin/pages/users/edit.pug", {
-//       pageTitle: "Trang chỉnh sửa user",
-//       product: item
-//     });
-//   }catch{
-//     res.redirect(`/${prefixAdmin}/users`);
-//   }
-// }
-
-// export const editPatch = async (req:Request, res: Response) => {
-//   // if(res.locals.role.permissions.includes("products_edit")){
-//     const id = req.params.id;
-
-//     // const idUpdated = res.locals.account.id;
-//     // req.body.idPersonUpdated = idUpdated;
-//     try{
-//       const user = await userModel.findOne({
+//     if(!item){
+//       req.flash("error", "Lỗi!");
+//     }
+//     else{
+//       await account.updateOne({
 //         _id: id
-//       })
-//       if(req.body.password == ""){ //Check xem co gui password, neu khong giu lai pass cu
-//         if(user){
-//           req.body.password = user.password;
-//         }
-//       }
-//       else {
-//         req.body.password = md5(req.body.password);
-//       }
-//       delete req.body.email //Xoa trương email neu co
-//       await userModel.updateOne({
-//         _id : id
-//       }, req.body);
-//       req.flash('success', 'Đã cập nhật!');
-//       res.redirect(`/${prefixAdmin}/users/edit/${id}`);
+//       }, {
+//         deleted: true
+//       });
+//       req.flash("success", "Xóa thành công!");
+//       res.json({
+//         code: 200
+//       });
 //     }
-//     catch(error){
-//       req.flash('error', 'Lỗi!');
-//       res.redirect(`/${prefixAdmin}/users/edit/${id}`);
-//     }
-//   // }
-//   // else{
-//   //   res.send("403");
-//   // } 
+//   } catch (error) {
+//     req.flash("error", "Lỗi!");
+//   } 
 // }
 
-// export const changeStatus = async (req:Request, res: Response) => {
-//   try{
-//     //req.params lay cac gia tri dong trong cai link, tra ve ob
-//     const {id, status} = req.params;
-
-//     await userModel.updateOne(
-//       {
-//         _id : id
-//       }, 
-//       {
-//         status : status
-//       }
-//     );
-//     req.flash('success', 'Cập nhật thành công!');
-//     res.json({
-//       code: 200
-//     });
-//     //Tra data ve cho FE, code duoi tra ve 1 ob 
-//   }catch(error){
-//     res.redirect(`/${prefixAdmin}/users`);
-//   }
-// }
-
-// export const changeManyStatus = async (req:Request, res: Response) => {
-//   // if(res.locals.role.permissions.includes("products_edit")){
-//     const {ids, status} = req.body;
-//       try{
-//         if(status == "delete"){
-//           await userModel.updateMany(
-//             {
-//               _id : ids
-//             },
-//             {
-//               deleted: true
-//             }
-//           )
-//         }
-//         else{
-//           await userModel.updateMany(
-//             {
-//               _id : ids
-//             },
-//             {
-//               status: status
-//             }
-//           )
-//         }
-      
-//         req.flash('success', 'Cập nhật thành công!');
-//         res.json({
-//           code : 200
-//         });
-//       }catch(error){
-//         res.redirect(`/${prefixAdmin}/users`);
-//       }
-//   // }
-//   // else{
-//   //   res.send("403");
-//   // }
-// };
+// //End delete
