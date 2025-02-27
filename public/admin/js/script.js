@@ -193,3 +193,49 @@ if(listPagination.length > 0){
 }
 
 //End pagination
+
+
+// Phan quyen cho nhom quyen
+const tablePermissions = document.querySelector("[table-permissions]");
+if(tablePermissions){
+  let rolesArray = [];
+  const buttonUpdate = document.querySelector("button[button-submit]");
+  buttonUpdate.addEventListener("click", ()=>{
+    const listRoles = tablePermissions.querySelectorAll("th[role-id]");
+    listRoles.forEach((item)=>{
+      const roleAndPermissions = {
+        id : item.getAttribute("role-id"),
+        permissions: []
+      };
+      const roles = tablePermissions.querySelectorAll(`input[data-id="${roleAndPermissions.id}"]:checked`);
+      roles.forEach((item)=>{
+        const permission = item.getAttribute("data-name");
+        roleAndPermissions.permissions.push(permission);
+      });
+      rolesArray.push(roleAndPermissions);
+    });
+    const path = buttonUpdate.getAttribute("button-submit");
+    fetch(path,{
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body : JSON.stringify({
+        rolesArray: rolesArray
+      })
+    })
+      .then(res=> res.json())
+      .then(data=>{
+      if(data.code == 200){
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Cập nhật thành công",
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }
+    })
+  });
+}
+// End Phan quyen cho nhom quyen(Quan trong)

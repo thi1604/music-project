@@ -1,5 +1,7 @@
 // import { routeTopics } from "../client/topics.route";
+import { routeAccount } from "./account.route";
 import { routeDashBoard } from "./dashBoard.route";
+import { rolesAdmin } from "./roles.route";
 import { routeSingerAdmin } from "./singer.route";
 import { routeSong } from "./song.route";
 import { routeTopicsAdmin } from "./topics.route";
@@ -12,4 +14,6 @@ export const routesAdmin = (app :any) => {
   app.use(`/${prefixAdmin}/topics`, routeTopicsAdmin);
   app.use(`/${prefixAdmin}/singers`, routeSingerAdmin);
   app.use(`/${prefixAdmin}/users`, routeUserAdmin);
+  app.use(`/${prefixAdmin}/accounts`, routeAccount);
+  app.use(`/${prefixAdmin}/roles`, rolesAdmin);
 };

@@ -1,0 +1,50 @@
+mixin feauter(title, records, nameData)
+  tr
+    td(colspan="4")
+      b #{title}
+  tr
+    td Xem
+    each item in records
+      td(class="text-center")
+        input(
+          type="checkbox" 
+          data-id=item.id 
+          data-name=`${nameData}_view`
+          checked=(item.permissions.includes(`${nameData}_view`) ? true : false)
+          disabled=(item.title == "Quản trị viên" ? true : false)
+        )
+  tr
+    if(title != "Thùng rác" && title != "Cài đặt chung")
+      td Thêm mới
+      each item in records
+        td(class="text-center")
+          input(
+            type="checkbox" 
+            data-id=item.id
+            data-name=`${nameData}_create`
+            checked=(item.permissions.includes(`${nameData}_create`) ? true : false)
+            disabled=(item.title == "Quản trị viên" ? true : false)
+          )
+  tr
+    td Chỉnh sửa
+    each item in records
+      td(class="text-center")
+        input(
+          type="checkbox" 
+          data-id=item.id
+          data-name=`${nameData}_edit`
+          checked=(item.permissions.includes(`${nameData}_edit`) ? true : false)
+          disabled=(item.title == "Quản trị viên" ? true : false)
+        )
+  tr
+    if(title != "Cài đặt chung")
+      td Xóa
+      each item in records
+        td(class="text-center")
+          input(
+            type="checkbox" 
+            data-id=item.id
+            data-name=`${nameData}_delete`
+            checked=(item.permissions.includes(`${nameData}_delete`) ? true : false)
+            disabled=(item.title == "Quản trị viên" ? true : false)
+          )
