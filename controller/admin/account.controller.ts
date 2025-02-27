@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { prefixAdmin } from "../../config/system";
 import { Pagination } from "../../helper/pagination.helper";
-import { userModel } from "../../models/user.model";
 import md5 from "md5";
 import { accountModel } from "../../models/account.model";
 import { rolesModel } from "../../models/roles.model";

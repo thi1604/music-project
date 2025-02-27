@@ -2,6 +2,7 @@
 import { routeAccount } from "./account.route";
 import { routeDashBoard } from "./dashBoard.route";
 import { rolesAdmin } from "./roles.route";
+import { routeSetting } from "./setting.route";
 import { routeSingerAdmin } from "./singer.route";
 import { routeSong } from "./song.route";
 import { routeTopicsAdmin } from "./topics.route";
@@ -16,4 +17,5 @@ export const routesAdmin = (app :any) => {
   app.use(`/${prefixAdmin}/users`, routeUserAdmin);
   app.use(`/${prefixAdmin}/accounts`, routeAccount);
   app.use(`/${prefixAdmin}/roles`, rolesAdmin);
+  app.use(`/${prefixAdmin}/settings`, routeSetting);
 };

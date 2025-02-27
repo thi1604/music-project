@@ -1,6 +1,6 @@
 import express from "express";
 import * as controller from "../../controller/admin/account.controller";
-import { uploadtoCloud, uploadFieldsToCloud } from "../../middlewares/admin/uploadCloud.middlewares";
+import { uploadtoCloud} from "../../middlewares/admin/uploadCloud.middlewares";
 import multer from "multer";
 
 const upload = multer();
