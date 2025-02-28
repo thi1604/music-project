@@ -6,7 +6,7 @@ include ../../mixins/box-actions.pug
 
 
 block main
-  if(role.permissions.includes("songs_view"))
+  if (role.permissions.includes("songs_view"))
     h1(class="mb-4") Quản lý bài hát 
     .card.mb-3
       .card-header Bộ lọc và Tìm kiếm
@@ -16,7 +16,7 @@ block main
             +filterStatus(listFilter)
           .col-6
             +search(keyword)
-    if(role.permissions.includes("songs_edit"))
+    if (role.permissions.includes("songs_edit"))
       .card.mb-3
         .card-header Hành động
         .card-body()
@@ -24,7 +24,7 @@ block main
     .card.mb-3
       .card-header Danh sách
       .card-body
-        if(role.permissions.includes("songs_create"))
+        if (role.permissions.includes("songs_create"))
           div(class="text-right mb-2")
             a(
               href=`/${prefixAdmin}/songs/create`
@@ -41,7 +41,7 @@ block main
               th STT
               th Hình ảnh
               th Tiêu đề
-              if(role.permissions.includes("songs_edit"))
+              if (role.permissions.includes("songs_edit"))
                 th Trạng thái
               th Hành động
 
@@ -63,7 +63,7 @@ block main
                     height="auto"
                   )
                 td #{item.title}
-                if(role.permissions.includes("songs_edit"))
+                if (role.permissions.includes("songs_edit"))
                   td
                     if(item.status == 'active')
                       button(
@@ -82,12 +82,12 @@ block main
                     class="btn btn-info btn-sm mr-1"
                     href= `/${prefixAdmin}/songs/detail/${item.id}`
                   ) Chi tiết
-                  if(role.permissions.includes("songs_edit"))
+                  if (role.permissions.includes("songs_edit"))
                     a(
                       class="btn btn-warning btn-sm"
                       href= `/${prefixAdmin}/songs/edit/${item.id}`
                     ) Sửa
-                  if(role.permissions.includes("songs_delete"))
+                  if (role.permissions.includes("songs_delete"))
                     button(
                       class="btn btn-danger btn-sm ml-1"
                       link-id-button = `/${prefixAdmin}/songs/delete/${item.id}` 

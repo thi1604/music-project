@@ -2,7 +2,7 @@ extends ../../layouts/default.pug
 
 
 block main
-  if(role.permissions.includes("songs_edit"))
+  if (role.permissions.includes("songs_edit"))
     h1(class="mb-4") #{pageTitle}
     form(
       action=`/${prefixAdmin}/songs/edit/${product.id}?_method=PATCH`

@@ -1,6 +1,6 @@
 extends ../../layouts/default.pug
 block main
-  if(role.permissions.includes("songs_create"))
+  if (role.permissions.includes("songs_create"))
     h1(class="mb-4") #{pageTitle}
     form(
         action=`/${prefixAdmin}/songs/create`
