@@ -188,25 +188,25 @@ export const create = async (req:Request, res: Response) => {
 
 export const createPost = async (req:Request, res: Response) => {
   if(res.locals.role.permissions.includes("songs_create")){
-  const totalSecond = parseFloat(req.body["duration"]);
-  const minutes = Math.floor(totalSecond / 60);
-  const second = Math.floor(totalSecond % 60);
-  const totalTime = `${String(minutes).padStart(2, "0")}:${String(second).padStart(2, "0")}`;
-  req.body["totalTime"] = totalTime;
-  // req.body["lyrics"] = req.body["lyrics"].join('\n');
-  console.log(req.body);
-  if(req.body.audio){
-    if(req.body.avatar){
-      req.body.avatar = req.body.avatar[0];
+    const totalSecond = parseFloat(req.body["duration"]);
+    const minutes = Math.floor(totalSecond / 60);
+    const second = Math.floor(totalSecond % 60);
+    const totalTime = `${String(minutes).padStart(2, "0")}:${String(second).padStart(2, "0")}`;
+    req.body["totalTime"] = totalTime;
+    // req.body["lyrics"] = req.body["lyrics"].join('\n');
+    console.log(req.body);
+    if(req.body.audio){
+      if(req.body.avatar){
+        req.body.avatar = req.body.avatar[0];
+      }
+      req.body.audio = req.body.audio[0];
+      const newSong = new songModel(req.body);
+      await newSong.save();
+      req.flash("success", "Tạo mới thành công!");
     }
-    req.body.audio = req.body.audio[0];
-    const newSong = new songModel(req.body);
-    await newSong.save();
-    req.flash("success", "Tạo mới thành công!");
-  }
-  else{
-    req.flash("error", "Chưa có file âm thanh!");
-  }
+    else{
+      req.flash("error", "Chưa có file âm thanh!");
+    }
   res.redirect(`/${prefixAdmin}/songs/create`);
   }
   else{

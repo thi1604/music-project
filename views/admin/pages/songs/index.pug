@@ -16,10 +16,11 @@ block main
             +filterStatus(listFilter)
           .col-6
             +search(keyword)
-    .card.mb-3
-      .card-header Hành động
-      .card-body()
-        +box-actions(`/${prefixAdmin}/songs/change-many-status`, listActions)
+    if(role.permissions.includes("songs_edit"))
+      .card.mb-3
+        .card-header Hành động
+        .card-body()
+          +box-actions(`/${prefixAdmin}/songs/change-many-status`, listActions)
     .card.mb-3
       .card-header Danh sách
       .card-body
@@ -40,7 +41,8 @@ block main
               th STT
               th Hình ảnh
               th Tiêu đề
-              th Trạng thái
+              if(role.permissions.includes("songs_edit"))
+                th Trạng thái
               th Hành động
 
           tbody
@@ -61,19 +63,20 @@ block main
                     height="auto"
                   )
                 td #{item.title}
-                td
-                  if(item.status == 'active')
-                    button(
-                      link =`/${prefixAdmin}/songs/change-status/${item.id}/inactive`
-                      class="badge badge-success"
-                      button-change-status
-                    ) Hoạt động 
-                  else 
-                    button(
-                      link =`/${prefixAdmin}/songs/change-status/${item.id}/active` 
-                      class="badge badge-danger"
-                      button-change-status 
-                    ) Dừng hoạt động 
+                if(role.permissions.includes("songs_edit"))
+                  td
+                    if(item.status == 'active')
+                      button(
+                        link =`/${prefixAdmin}/songs/change-status/${item.id}/inactive`
+                        class="badge badge-success"
+                        button-change-status
+                      ) Hoạt động 
+                    else 
+                      button(
+                        link =`/${prefixAdmin}/songs/change-status/${item.id}/active` 
+                        class="badge badge-danger"
+                        button-change-status 
+                      ) Dừng hoạt động 
                 td
                   a(
                     class="btn btn-info btn-sm mr-1"
