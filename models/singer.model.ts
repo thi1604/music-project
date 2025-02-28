@@ -15,6 +15,9 @@ const singerSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  idPersonCreated: String,
+  idPersonUpdated: String,
+  idPersonDeleted: String,
   description: String,
   slug: {
     type: String,
