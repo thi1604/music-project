@@ -4,7 +4,7 @@
       
       li
         a(href=`/${prefixAdmin}/dashboard`) Tổng quan
-      if(role.permissions.includes("categories_view"))
+      if(role.permissions.includes("songs-category_view"))
         li
           a(href=`/${prefixAdmin}/topics`) Quản lý chủ đề
       if(role.permissions.includes("songs_view"))

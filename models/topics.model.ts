@@ -12,6 +12,9 @@ const topicSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  idPersonCreated: String,
+  idPersonUpdated: String,
+  idPersonDeleted: String,
   deleted: {
     type: Boolean,
     default: false
