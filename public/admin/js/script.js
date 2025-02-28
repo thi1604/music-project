@@ -239,3 +239,72 @@ if(tablePermissions){
   });
 }
 // End Phan quyen cho nhom quyen(Quan trong)
+
+
+// Restore
+const listButtonRestore = document.querySelectorAll("[restore-item]");
+if(listButtonRestore.length > 0){
+  listButtonRestore.forEach((item)=>{
+    item.addEventListener("click", ()=>{
+      const link = item.getAttribute("link-id-button-trash");
+      fetch(link, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.code == 200){
+          window.location.reload();
+        }
+      })
+    });
+  });
+}
+// End Restore
+
+
+// Delete item
+const listButtonDelete = document.querySelectorAll("[link-id-button]");
+if(listButtonDelete.length > 0){
+  listButtonDelete.forEach((item) => {
+    item.addEventListener("click", ()=> {
+      const link = item.getAttribute("link-id-button");
+      fetch(link, {
+        method: "PATCH"
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == 200)
+            window.location.reload();
+      })
+    });
+  });
+}
+// End Delete item
+
+// Xoa vinh vien
+const listButtonDeletePer = document.querySelectorAll("[permanently-deleted]");
+if(listButtonDeletePer.length > 0){
+  listButtonDeletePer.forEach((item) => {
+    item.addEventListener("click", ()=>{
+      let check = confirm("Bạn chắc chắn xóa ?");
+      if(check){
+        const link = item.getAttribute("link-id-button-trash");
+        fetch(link, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == 200)
+            window.location.reload();
+        })
+      }
+    });
+  });
+}
+// End Xoa vinh vien

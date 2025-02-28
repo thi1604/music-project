@@ -28,3 +28,21 @@
       if(role.permissions.includes("setting_view"))
         li
           a(href=`/${prefixAdmin}/settings/general`) Cài đặt chung
+      if  (role.permissions.includes("trash_view"))
+        li
+          .btn-group.dropup.trash
+            button.btn.btn-secondary.dropdown-toggle(type='button' data-toggle='dropdown' aria-expanded='false')
+              | Thùng rác
+            .dropdown-menu
+              a(
+                class = "dropdown-item"
+                href=`/${prefixAdmin}/trash/products`
+              ) Sản phẩm
+              a(
+                class = "dropdown-item"
+                href=`/${prefixAdmin}/trash/role`
+              ) Nhóm quyền
+              a(
+                class = "dropdown-item"
+                href=`/${prefixAdmin}/trash/account`
+              ) Tài khoản admin

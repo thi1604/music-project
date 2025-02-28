@@ -108,3 +108,18 @@
   display: none;
 }
 /* End Show-alert */
+
+.trash {
+  position: fixed;
+  bottom: 10px;
+  left: 5px;
+}
+
+/* trash */
+.dropdown-menu {
+  padding: 0px;
+}
+.dropdown-menu .dropdown-item {
+  background-color: #323232;
+}
+/* End trash */
