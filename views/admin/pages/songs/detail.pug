@@ -19,12 +19,12 @@ block main
         span(class="badge badge-success") Hoạt động
       else
         span(class="badge badge-danger") Dừng hoạt động
-  //- if(product.createdAt)
-  //-   div(class="mb-4") Tạo bởi: <b>#{product.namePersonCreated}</b>
-  //-   div(class="mb-4") Thời gian tạo: <b> #{product.formatCreatedAt}</b>
-  //- if(product.updatedAt)
-  //-   div(class="mb-4") Người sửa gần nhất: <b> #{product.namePersonUpdated}</b>
-  //-   div(class="mb-4") Thời gian sửa: <b> #{product.formatUpdatedAt}</b>
+  if(product.createdAt)
+    div(class="mb-4") Tạo bởi: <b>#{product.namePersonCreated}</b>
+    div(class="mb-4") Thời gian tạo: <b> #{product.formatCreatedAt}</b>
+  if(product.updatedAt)
+    div(class="mb-4") Người sửa gần nhất: <b> #{product.namePersonUpdated}</b>
+    div(class="mb-4") Thời gian sửa: <b> #{product.formatUpdatedAt}</b>
 
   if (product.description)
     h2(class="mb-4") Mô tả sản phẩm
