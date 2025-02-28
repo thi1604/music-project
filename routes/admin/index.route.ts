@@ -1,5 +1,5 @@
 // import { routeTopics } from "../client/topics.route";
-import { authMiddleware } from "../../middlewares/auth-middlewares";
+import { authMiddleware } from "../../middlewares/admin/auth-middlewares";
 import { routeAccount } from "./account.route";
 import { routeAuth } from "./auth.route";
 import { routeDashBoard } from "./dashBoard.route";

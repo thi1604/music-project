@@ -26,6 +26,8 @@ route.post(
   controller.createPost
 );
 
+route.patch("/delete/:id", controller.deleteItem);
+
 // route.patch("/change-many-status", controller.changeManyStatus);
 
 export const routeAccount = route;

@@ -154,3 +154,31 @@ export const detail = async (req : Request, res: Response) =>{
     console.log("error");
   }
 }
+
+export const deleteItem = async (req:Request, res: Response) => {
+  if(res.locals.role.permissions.includes("songs-category_delete")){
+    try{
+      const id = req.params.id;   //res.params tra ve 1 ob chua cac bien dong tren url
+      await topicModel.updateOne(
+        {
+          _id : id
+        }, 
+        {
+          deleted : true,
+          idPersonDeleted: res.locals.account.id
+        }
+      );
+
+      req.flash('success', 'Xoá thành công!');
+      res.json({
+        code : 200
+      });
+
+    }catch(error){
+      res.redirect(`${prefixAdmin}/songs`);
+    }
+  }
+  else{
+    res.send("403");
+  }
+};

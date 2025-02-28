@@ -255,30 +255,30 @@ export const changeStatus = async (req: Request, res: Response) => {
 
 // //End ChangeStatus
 
-// // delete
-// module.exports.deletePatch = async (req, res)=>{
-//   try {
-//     const id = req.body.idAccount;
-//     const item = account.findOne({
-//       _id: id
-//     });
-//     if(!item){
-//       req.flash("error", "Lỗi!");
-//     }
-//     else{
-//       await account.updateOne({
-//         _id: id
-//       }, {
-//         deleted: true
-//       });
-//       req.flash("success", "Xóa thành công!");
-//       res.json({
-//         code: 200
-//       });
-//     }
-//   } catch (error) {
-//     req.flash("error", "Lỗi!");
-//   } 
-// }
+export const deleteItem = async (req:Request, res: Response) => {
+  if(res.locals.role.permissions.includes("accounts_delete")){
+    try{
+      const id = req.params.id;   //res.params tra ve 1 ob chua cac bien dong tren url
+      await accountModel.updateOne(
+        {
+          _id : id
+        }, 
+        {
+          deleted : true,
+          idPersonDeleted: res.locals.account.id
+        }
+      );
 
-// //End delete
+      req.flash('success', 'Xoá thành công!');
+      res.json({
+        code : 200
+      });
+
+    }catch(error){
+      res.redirect(`${prefixAdmin}/songs`);
+    }
+  }
+  else{
+    res.send("403");
+  }
+};

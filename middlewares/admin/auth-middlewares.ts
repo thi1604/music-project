@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { prefixAdmin } from "../config/system";
-import { accountModel } from "../models/account.model";
-import { rolesModel } from "../models/roles.model";
+import { prefixAdmin } from "../../config/system";
+import { accountModel } from "../../models/account.model";
+import { rolesModel } from "../../models/roles.model";
 
 
 export const authMiddleware  = async (req :Request, res: Response, next: NextFunction) => {

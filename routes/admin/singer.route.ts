@@ -30,4 +30,6 @@ router.patch(
 
 router.get("/detail/:id", controller.detail);
 
+router.patch("/delete/:id", controller.deleteItem);
+
 export const routeSingerAdmin = router;

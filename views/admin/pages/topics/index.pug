@@ -62,10 +62,11 @@ block main
                     class="btn btn-warning btn-sm ml-1"
                     href=`/${prefixAdmin}/topics/edit/${item.id}`
                   ) Sửa
-                if(role.permissions.includes("songs-category_delete"))
+                if (role.permissions.includes("songs-category_delete"))
                   button(
                     class="btn btn-danger btn-sm ml-1"
                     button-delete
+                    link-id-button=`/${prefixAdmin}/topics/delete/${item.id}` 
                     data-id=item.id
                   ) Xóa
       div(class="mx-auto")

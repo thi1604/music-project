@@ -28,6 +28,9 @@ router.patch(
   controller.editPatch
 )
 
+
 router.get("/detail/:id", controller.detail);
+
+router.patch("/delete/:id", controller.deleteItem);
 
 export const routeTopicsAdmin = router;

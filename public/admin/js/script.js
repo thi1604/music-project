@@ -269,9 +269,10 @@ if(listButtonRestore.length > 0){
 const listButtonDelete = document.querySelectorAll("[link-id-button]");
 if(listButtonDelete.length > 0){
   listButtonDelete.forEach((item) => {
-    item.addEventListener("click", ()=> {
+    item.addEventListener("click", async ()=> {
       const link = item.getAttribute("link-id-button");
-      fetch(link, {
+      console.log(link);
+      await fetch(link, {
         method: "PATCH"
       })
         .then(res => res.json())
