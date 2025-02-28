@@ -30,6 +30,6 @@ route.patch("/delete/:id", controller.deleteItem);
 
 route.patch("/change-many-status", controller.changeManyStatus);
 
-
+route.patch("/delete/:id", controller.deleteItem);
 
 export const routeSong = route;

@@ -19,4 +19,6 @@ route.patch("/change-status/:id/:status", controller.changeStatus);
 
 route.patch("/change-many-status", controller.changeManyStatus);
 
+route.patch("/delete/:id", controller.deleteItem);
+
 export const routeUserAdmin = route;

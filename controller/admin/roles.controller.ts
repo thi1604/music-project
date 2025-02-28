@@ -160,32 +160,30 @@ export const detail = async (req: Request, res: Response) => {
   }
 }
 
-export const deletePatch = async (req: Request, res: Response) =>{
+export const deleteItem = async (req:Request, res: Response) => {
   if(res.locals.role.permissions.includes("roles_delete")){
-    try {
-      const id = req.body.idRole;
-      const item = rolesModel.findOne({
-        _id: id
+    try{
+      const id = req.params.id;   //res.params tra ve 1 ob chua cac bien dong tren url
+      await rolesModel.updateOne(
+        {
+          _id : id
+        }, 
+        {
+          deleted : true,
+          idPersonDeleted: res.locals.account.id
+        }
+      );
+
+      req.flash('success', 'Xoá thành công!');
+      res.json({
+        code : 200
       });
-      if(!item){
-        req.flash("error", "Lỗi!");
-      }
-      else{
-        await rolesModel.updateOne({
-          _id: id
-        }, {
-          deleted: true
-        });
-        req.flash("success", "Xóa thành công!");
-        res.json({
-          code: 200
-        });
-      }
-    } catch (error) {
-      req.flash("error", "Lỗi!");
-    } 
+
+    }catch(error){
+      res.redirect(`${prefixAdmin}/roles`);
+    }
   }
   else{
     res.send("403");
   }
-}
+};

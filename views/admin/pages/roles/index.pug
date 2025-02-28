@@ -46,7 +46,7 @@ block main
                     if (role.permissions.includes("roles_delete"))
                       button(
                         class="btn btn-danger btn-sm ml-1"
-                        link=`/${prefixAdmin}/roles/delete/${item.id}`
+                        link-id-button=`/${prefixAdmin}/roles/delete/${item.id}`
                         delete-role-id=`${item.id}`
                       ) Xóa
                       

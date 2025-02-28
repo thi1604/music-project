@@ -226,3 +226,32 @@ export const changeManyStatus = async (req:Request, res: Response) => {
     res.send("403");
   }
 };
+
+
+export const deleteItem = async (req:Request, res: Response) => {
+  if(res.locals.role.permissions.includes("users_delete")){
+    try{
+      const id = req.params.id;   //res.params tra ve 1 ob chua cac bien dong tren url
+      await userModel.updateOne(
+        {
+          _id : id
+        }, 
+        {
+          deleted : true,
+          idPersonDeleted: res.locals.account.id
+        }
+      );
+
+      req.flash('success', 'Xoá thành công!');
+      res.json({
+        code : 200
+      });
+
+    }catch(error){
+      res.redirect(`${prefixAdmin}/users`);
+    }
+  }
+  else{
+    res.send("403");
+  }
+};
