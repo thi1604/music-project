@@ -14,7 +14,7 @@ export const general = async (req: Request, res: Response) => {
 }
 
 export const generalPost = async (req: Request, res: Response) => {
-  // if(res.locals.role.permissions.includes("setting_edit")){
+  if(res.locals.role.permissions.includes("setting_edit")){
     try {
       const data = await settingsModel.findOne({});
       if(data){
@@ -31,8 +31,8 @@ export const generalPost = async (req: Request, res: Response) => {
     } catch (error) {
     res.send("403");
     }
-  // }
-  // else{
-  //   res.send("403");
-  // }
+  }
+  else{
+    res.send("403");
+  }
 }
