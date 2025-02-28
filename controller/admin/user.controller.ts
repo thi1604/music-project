@@ -128,7 +128,7 @@ export const edit = async (req:Request, res: Response) => {
 }
 
 export const editPatch = async (req:Request, res: Response) => {
-  // if(res.locals.role.permissions.includes("products_edit")){
+  if(res.locals.role.permissions.includes("users_edit")){
     const id = req.params.id;
 
     // const idUpdated = res.locals.account.id;
@@ -156,13 +156,14 @@ export const editPatch = async (req:Request, res: Response) => {
       req.flash('error', 'Lỗi!');
       res.redirect(`/${prefixAdmin}/users/edit/${id}`);
     }
-  // }
-  // else{
-  //   res.send("403");
-  // } 
+  }
+  else{
+    res.send("403");
+  } 
 }
 
 export const changeStatus = async (req:Request, res: Response) => {
+  if(res.locals.role.permissions.includes("users_edit")){
   try{
     //req.params lay cac gia tri dong trong cai link, tra ve ob
     const {id, status} = req.params;
@@ -182,11 +183,14 @@ export const changeStatus = async (req:Request, res: Response) => {
     //Tra data ve cho FE, code duoi tra ve 1 ob 
   }catch(error){
     res.redirect(`/${prefixAdmin}/users`);
-  }
+  }}
+  else{
+    res.send("403");
+  } 
 }
 
 export const changeManyStatus = async (req:Request, res: Response) => {
-  // if(res.locals.role.permissions.includes("products_edit")){
+  if(res.locals.role.permissions.includes("users_edit")){
     const {ids, status} = req.body;
       try{
         if(status == "delete"){
@@ -217,8 +221,8 @@ export const changeManyStatus = async (req:Request, res: Response) => {
       }catch(error){
         res.redirect(`/${prefixAdmin}/users`);
       }
-  // }
-  // else{
-  //   res.send("403");
-  // }
+  }
+  else{
+    res.send("403");
+  }
 };

@@ -15,7 +15,7 @@ mixin feauter(title, records, nameData)
           disabled=(item.title == "Quản trị viên" ? true : false)
         )
   tr
-    if(title != "Thùng rác" && title != "Cài đặt chung")
+    if(title != "Thùng rác" && title != "Cài đặt chung" && title != "Tài khoản user")
       td Thêm mới
       each item in records
         td(class="text-center")

@@ -42,6 +42,7 @@ block main
               disabled=(item.title == "Quản trị viên" ? true : false)
             )
       +feauter("Tài khoản admin", records, "accounts")
+      +feauter("Tài khoản user", records, "users")
       +feauter("Thùng rác", records, "trash")
       +feauter("Cài đặt chung", records, "setting")
       
