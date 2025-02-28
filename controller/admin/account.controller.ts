@@ -5,6 +5,7 @@ import md5 from "md5";
 import { accountModel } from "../../models/account.model";
 import { rolesModel } from "../../models/roles.model";
 import { generateRandomString } from "../../helper/generate.helper";
+import moment from "moment";
 
 export const index = async (req:Request, res: Response) => {
   
@@ -89,33 +90,33 @@ export const create = async (req :Request, res: Response) => {
 
 
 export const createPost = async (req :Request, res: Response) => {
-  // if(res.locals.role.permissions.includes("accounts_create")){
-  try {
-    
-    req.body.password = md5(req.body.password);
-    const token = generateRandomString(30);
-    req.body.token = token;
-    // Tim ten nhom quyen cho account
-    const role = await rolesModel.findOne({
-      _id: req.body.role_id,
-      deleted : false
-    }).select("title");
+  if(res.locals.role.permissions.includes("accounts_create")){
+    try {
+      
+      req.body.password = md5(req.body.password);
+      const token = generateRandomString(30);
+      req.body.token = token;
+      // Tim ten nhom quyen cho account
+      const role = await rolesModel.findOne({
+        _id: req.body.role_id,
+        deleted : false
+      }).select("title");
 
-    req.body.roleName = role.title;
+      req.body.roleName = role.title;
 
-    // req.body.idPersonCreated = res.locals.account.id;
+      req.body["idPersonCreated"] = res.locals.account.id;
 
-    const newAccount = new accountModel(req.body);
-    await newAccount.save();
-    req.flash("success", "Tạo thành công!");  
-    res.redirect(`/${prefixAdmin}/accounts`);
-  } catch (error) {
-    console.log(error);
+      const newAccount = new accountModel(req.body);
+      await newAccount.save();
+      req.flash("success", "Tạo thành công!");  
+      res.redirect(`/${prefixAdmin}/accounts`);
+    } catch (error) {
+      console.log(error);
+    }
   }
-  // }
-  // else{
-  //   res.send("403");
-  // }
+  else{
+    res.send("403");
+  }
 }
 
 export const edit = async (req: Request, res: Response) => {
@@ -145,7 +146,7 @@ export const edit = async (req: Request, res: Response) => {
 }  
 
 export const editPatch = async (req: Request, res: Response) => {
-  // if(res.locals.role.permissions.includes("accounts_edit")){
+  if(res.locals.role.permissions.includes("accounts_edit")){
     try{
       const id = req.params.id;
       const existAdmin = await accountModel.findOne({
@@ -162,7 +163,7 @@ export const editPatch = async (req: Request, res: Response) => {
         }
         else
           req.body.password = md5(req.body.password);
-        // req.body.idPersonUpdated = res.locals.account.id;
+        req.body["idPersonUpdated"] = res.locals.account.id;
         await accountModel.updateOne({
           _id: id
         }, req.body);
@@ -173,10 +174,10 @@ export const editPatch = async (req: Request, res: Response) => {
       req.flash("error", "Lỗi!");
       res.redirect(`/${prefixAdmin}/accounts`);
     }
-  // }
-  // else{
-  //   res.send("403");
-  // }
+  }
+  else{
+    res.send("403");
+  }
 }
 
 export const detail = async (req:Request, res: Response)=>{
@@ -186,28 +187,28 @@ export const detail = async (req:Request, res: Response)=>{
       _id : id
     });
 
-    // item.formatCreatedAt = moment(item.createdAt).format("HH:mm:ss DD/MM/YY");
-    // item.formatUpdatedAt = moment(item.updatedAt).format("HH:mm:ss DD/MM/YY");
+    item["formatCreatedAt"] = moment(item.createdAt).format("HH:mm:ss DD/MM/YY");
+    item["formatUpdatedAt"] = moment(item.updatedAt).format("HH:mm:ss DD/MM/YY");
 
 
     //Lay ra nguoi tao
-    // const accountCreated = await account.findOne({
-    //   _id: item.idPersonCreated
-    // }).select("fullName");
+    const accountCreated = await accountModel.findOne({
+      _id: item.idPersonCreated
+    }).select("fullName");
     //Het lay ra nguoi tao
 
     //Lay ra nguoi updated
-    // const accountUpdated = await account.findOne({
-    //   _id: item.idPersonUpdated
-    // }).select("fullName");
+    const accountUpdated = await accountModel.findOne({
+      _id: item.idPersonUpdated
+    }).select("fullName");
     //End lay ra nguoi updated
 
-    // if(accountUpdated){
-    //   item.namePersonUpdated = accountUpdated.fullName;
-    // }
-    // if(accountCreated){
-    //   item.namePersonCreated = accountCreated.fullName;
-    // }
+    if(accountUpdated){
+      item["namePersonUpdated"] = accountUpdated.fullName;
+    }
+    if(accountCreated){
+      item["namePersonCreated"] = accountCreated.fullName;
+    }
     res.render(`admin/pages/accounts/detail.pug`,{
       pageTitle: "Chi tiết tài khoản",
       product : item
@@ -220,30 +221,36 @@ export const detail = async (req:Request, res: Response)=>{
 // //ChangeStatus
 
 export const changeStatus = async (req: Request, res: Response) => {
-  const {id, status} = req.params;
-  try{
-    const admin = await accountModel.findOne({
-      _id: id
-    });
-    if(admin && (status == "active" || status == "inactive")){
-      await accountModel.updateOne({
-        _id : id
-      }, {
-        status: status
+  if(res.locals.role.permissions.includes("accounts_edit")){
+
+    const {id, status} = req.params;
+    try{
+      const admin = await accountModel.findOne({
+        _id: id
       });
-      req.flash("success", "Cập nhật thành công!");
+      if(admin && (status == "active" || status == "inactive")){
+        await accountModel.updateOne({
+          _id : id
+        }, {
+          status: status
+        });
+        req.flash("success", "Cập nhật thành công!");
+      }
+      else{
+        req.flash("error", "Lỗi!");
+      }
     }
-    else{
+    catch(error){
       req.flash("error", "Lỗi!");
     }
-  }
-  catch(error){
-    req.flash("error", "Lỗi!");
-  }
 
-  res.json({
-    code: 200
-  });
+    res.json({
+      code: 200
+    });
+  }
+  else{
+    res.json({code : 403})
+  }
 }
 
 // //End ChangeStatus
