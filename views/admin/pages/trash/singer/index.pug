@@ -1,0 +1,75 @@
+extends ../../../layouts/default.pug
+include ../../../mixins/filter.pug
+include ../../../mixins/search.pug
+include ../../../mixins/pagination.pug
+include ../../../mixins/box-actions.pug
+
+
+block main
+  if(role.permissions.includes("trash_view"))
+    h1(class="mb-4") Thùng rác ca sĩ
+    //- .card.mb-3
+    //-   .card-header Bộ lọc và Tìm kiếm
+    //-   .card-body
+    //-     .row
+    //-       .col-6 
+    //-         +filterStatus(listFilter)
+    //-       .col-6
+    //-         +search(keyword)
+    //- .card.mb-3
+    //-   .card-header Hành động
+    //-   .card-body
+    //-     +box-actions(`/${prefixAdmin}/trash/change-many-item`, listActions)
+    .card.mb-3
+      .card-header Danh sách
+      .card-body
+        table.table.table-hover.table-sm
+          thead
+            tr
+              th STT
+              th Hình ảnh
+              th Tiêu đề
+              //- th Giá
+              //- th Vị trí
+              th Trạng thái
+              th Hành động
+              th Xóa bởi 
+
+          tbody
+            for item, index in listProducts
+              tr
+                td #{index + 1}
+                td #{item.fullName}
+                td
+                  img(
+                    src=item.avatar
+                    alt=item.fullName
+                    width="100px"
+                    height="auto"
+                  )
+                td
+                  if(item.status == 'active')
+                    button(
+                      class="badge badge-success"
+                    ) Hoạt động 
+                  else 
+                    button(
+                      class="badge badge-danger"
+                    ) Dừng hoạt động 
+                td
+                  button(
+                    class="btn btn-warning btn-sm"
+                    restore-item
+                    link-id-button-trash = `/${prefixAdmin}/trash/singers/restore/${item.id}`
+                  ) Khôi phục
+                  button(
+                    class="btn btn-danger btn-sm ml-1"
+                    permanently-deleted
+                    link-id-button-trash = `/${prefixAdmin}/trash/singers/permanently-deleted/${item.id}`
+      
+                  ) Xóa vĩnh viễn
+                td
+                  div #{item.namePersonDeleted} #{item.formatUpdatedAt}
+      div(class="mx-auto")
+        +pagination(pagination)
+    

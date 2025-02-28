@@ -3,7 +3,10 @@ import moment from "moment";
 import { Pagination } from "../../helper/pagination.helper";
 import { accountModel } from "../../models/account.model";
 import { rolesModel } from "../../models/roles.model";
+import { singerModel } from "../../models/singer.model";
 import { songModel } from "../../models/song.model";
+import { topicModel } from "../../models/topics.model";
+import { userModel } from "../../models/user.model";
 
 // songs
 export const indexProduct = async (req : Request, res: Response)=>{
@@ -204,6 +207,146 @@ export const restorePatch = async (req : Request, res: Response)=>{
 }
 //End Role
 
+// topics
+export const indexTopics = async (req : Request, res: Response)=>{
+  const filter = {
+    deleted : true
+  };  
+  const pagination = await Pagination(req, filter, topicModel);
+  const listProducts = await topicModel.find(filter).limit(pagination.limitItems).skip(pagination.skip);
+  for(const item of listProducts){
+    const namePersonDeleted = await accountModel.findOne({
+      _id: item.idPersonDeleted
+    }).select("fullName");
+    if(namePersonDeleted){
+      item["namePersonDeleted"] = namePersonDeleted.fullName;
+    }
+    item["formatUpdatedAt"] = moment(item.updatedAt).format("DD/MM/YY HH:mm:ss");
+  }
+
+  res.render("admin/pages/trash/topic/index.pug", {
+    pageTitle : "Trang thùng rác",
+    listProducts: listProducts,
+    pagination : Pagination
+  });
+}
+
+export const restoreTopic = async (req : Request, res: Response)=>{
+  if(res.locals.role.permissions.includes("trash_edit")){
+    try {
+      const id = req.params.id;
+      await topicModel.updateOne({
+        _id : id
+      }, 
+      {
+        deleted : false
+      });
+      req.flash('success', 'Khôi phục thành công!');
+      res.json({
+        code : 200
+      })
+    } catch (error) {
+      req.flash("error", "Lỗi!");
+    }
+  }
+  else{
+    res.send("403");
+  }
+}
+
+// singers
+export const indexSingers = async (req : Request, res: Response)=>{
+  const filter = {
+    deleted : true
+  };  
+  const pagination = await Pagination(req, filter, singerModel);
+  const listProducts = await singerModel.find(filter).limit(pagination.limitItems).skip(pagination.skip);
+  for(const item of listProducts){
+    const namePersonDeleted = await accountModel.findOne({
+      _id: item.idPersonDeleted
+    }).select("fullName");
+    if(namePersonDeleted){
+      item["namePersonDeleted"] = namePersonDeleted.fullName;
+    }
+    item["formatUpdatedAt"] = moment(item.updatedAt).format("DD/MM/YY HH:mm:ss");
+  }
+
+  res.render("admin/pages/trash/singer/index.pug", {
+    pageTitle : "Trang thùng rác",
+    listProducts: listProducts,
+    pagination : Pagination
+  });
+}
+
+export const restoreSingers = async (req : Request, res: Response)=>{
+  if(res.locals.role.permissions.includes("trash_edit")){
+    try {
+      const id = req.params.id;
+      await singerModel.updateOne({
+        _id : id
+      }, 
+      {
+        deleted : false
+      });
+      req.flash('success', 'Khôi phục thành công!');
+      res.json({
+        code : 200
+      })
+    } catch (error) {
+      req.flash("error", "Lỗi!");
+    }
+  }
+  else{
+    res.send("403");
+  }
+}
+
+//users
+export const indexUsers = async (req : Request, res: Response)=>{
+  const filter = {
+    deleted : true
+  };  
+  const pagination = await Pagination(req, filter, userModel);
+  const listProducts = await userModel.find(filter).limit(pagination.limitItems).skip(pagination.skip);
+  // for(const item of listProducts){
+  //   const namePersonDeleted = await accountModel.findOne({
+  //     _id: item.idPersonDeleted
+  //   }).select("fullName");
+  //   if(namePersonDeleted){
+  //     item["namePersonDeleted"] = namePersonDeleted.fullName;
+  //   }
+  //   item["formatUpdatedAt"] = moment(item.updatedAt).format("DD/MM/YY HH:mm:ss");
+  // }
+
+  res.render("admin/pages/trash/user/index.pug", {
+    pageTitle : "Trang thùng rác",
+    listProducts: listProducts,
+    pagination : Pagination
+  });
+}
+
+export const restoreUsers = async (req : Request, res: Response)=>{
+  if(res.locals.role.permissions.includes("trash_edit")){
+    try {
+      const id = req.params.id;
+      await userModel.updateOne({
+        _id : id
+      }, 
+      {
+        deleted : false
+      });
+      req.flash('success', 'Khôi phục thành công!');
+      res.json({
+        code : 200
+      })
+    } catch (error) {
+      req.flash("error", "Lỗi!");
+    }
+  }
+  else{
+    res.send("403");
+  }
+}
 
 // // Account
 export const indexAccount = async (req: Request, res: Response)=>{
@@ -272,7 +415,6 @@ export const indexAccount = async (req: Request, res: Response)=>{
     keyword: keyword
   });
 }
-
 
 export const restoreAccPatch = async (req: Request, res: Response)=>{
   if(res.locals.role.permissions.includes("trash_edit")){
