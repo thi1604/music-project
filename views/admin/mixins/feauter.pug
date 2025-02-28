@@ -2,6 +2,7 @@ mixin feauter(title, records, nameData)
   tr
     td(colspan="4")
       b #{title}
+  //- disabled=(item.title == "Quản trị viên" ? true : false)
   tr
     td Xem
     each item in records
