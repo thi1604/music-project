@@ -1,6 +1,6 @@
 import express from "express";
 const route = express.Router();
-import * as controller from "../../controller/admin/dashBoard.controller";
+import * as controller from "../../controller/admin/home.controller";
 
 route.get("", controller.index);
 

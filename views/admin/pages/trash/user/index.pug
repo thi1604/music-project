@@ -27,9 +27,9 @@ block main
           thead
             tr
               th STT
+              th Họ và tên
               th Hình ảnh
-              th Tiêu đề
-              //- th Giá
+              th Email
               //- th Vị trí
               th Trạng thái
               th Hành động
@@ -40,6 +40,7 @@ block main
               tr
                 td #{index + 1}
                 td #{item.fullName}
+                td #{item.email}
                 td
                   img(
                     src=item.avatar

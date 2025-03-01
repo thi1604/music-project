@@ -1,4 +1,3 @@
-import { Model } from "mongoose";
 
 export const Pagination =  async (req: any, filter: any, nameModel: any, limitItems = 4) => {
   // if(nameModel == "trash")

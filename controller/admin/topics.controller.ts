@@ -8,17 +8,20 @@ import { accountModel } from "../../models/account.model";
 
 export const index = async (req : Request, res: Response) => {
 
-  let record = await topicModel.find({
+  // let record = await topicModel.find({
+  //   deleted: false
+  // });
+  const filter = {
     deleted: false
-  });
+  }
 
-  const pagination = await Pagination(req, record, topicModel);
+  const pagination = await Pagination(req, filter, topicModel);
 
   if(req.query.page == '0'){
     pagination.currentPage = 1;
   }
 
-  record = await 
+  const record = await 
   topicModel
   .find({deleted: false})
   .limit(pagination.limitItems)
