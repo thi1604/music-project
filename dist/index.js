@@ -21,9 +21,10 @@ const app = (0, express_1.default)();
 const port = process.env.PORT;
 app.use((0, cookie_parser_1.default)('ThiBeo'));
 app.use(express_1.default.static(`${__dirname}/public`));
+const DomainBE = process.env.DOMAIN_BACKEND;
 (0, database_1.connect)();
 app.use((0, cors_1.default)({
-    origin: "http://localhost:3001",
+    origin: `${DomainBE}`,
 }));
 app.locals["prefixAdmin"] = system_1.prefixAdmin;
 app.set("views", `${__dirname}/views`);

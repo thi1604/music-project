@@ -18,11 +18,11 @@ const app : Express = express();
 const port : number | string = process.env.PORT;
 app.use(cookieParser('ThiBeo'));
 app.use(express.static(`${__dirname}/public`)); // Nhung folder FE vao project
-
+const DomainBE = process.env.DOMAIN_BACKEND;
 connect();
 
 app.use(cors({
-  origin: "http://localhost:3001",
+  origin: `${DomainBE}`,
 }));
 
 
