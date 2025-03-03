@@ -1,0 +1,35 @@
+extends ../../layouts/default.pug
+
+block main
+  if (role.permissions.includes("accounts_view"))
+    if (product.fullName)
+      h1(class="mb-4") #{product.fullName}
+
+    if (product.email)
+      div(class="mb-4") Email: <b>#{product.email}</b>
+
+    if (product.phone)
+      div(class="mb-4") Số điện thoại: <b>#{product.phone}</b>
+    if (product.roleName)
+      div(class="mb-4") Chức vụ: <b>#{product.roleName}</b>
+    if (product.avatar)
+      div(class="mb-4")
+        img(
+          src=product.avatar
+          style="width: 100px"
+        )
+
+    if (product.status)
+      div(class="mb-4")
+        span Trạng thái:
+        if (product.status === "active")
+          span(class="badge badge-success") Hoạt động
+        else
+          span(class="badge badge-danger") Dừng hoạt động
+
+    if(product.createdAt)
+      div(class="mb-4") Tạo bởi: <b>#{product.namePersonCreated}</b>
+      div(class="mb-4") Thời gian tạo: <b> #{product.formatCreatedAt}</b>
+    if(product.updatedAt)
+      div(class="mb-4") Người sửa gần nhất: <b> #{product.namePersonUpdated}</b>
+      div(class="mb-4") Thời gian sửa: <b> #{product.formatUpdatedAt}</b>

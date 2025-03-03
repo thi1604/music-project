@@ -1,0 +1,15 @@
+extends ../../layouts/default.pug
+
+block main
+  if(role.permissions.includes("roles_view"))
+    if (product.title)
+      h1(class="mb-4") #{product.title}
+
+    if (product.description)
+      div(class="mb-4") Mô tả: <b>#{product.description}</b>
+    if(product.createdAt)
+      div(class="mb-4") Tạo bởi: <b>#{product.namePersonCreated}</b>
+      div(class="mb-4") Thời gian tạo: <b> #{product.formatCreatedAt}</b>
+    if(product.updatedAt)
+      div(class="mb-4") Người sửa gần nhất: <b> #{product.namePersonUpdated}</b>
+      div(class="mb-4") Thời gian sửa: <b> #{product.formatUpdatedAt}</b>

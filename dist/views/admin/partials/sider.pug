@@ -1,0 +1,60 @@
+.sider
+  .inner-menu
+    ul
+      
+      li
+        a(href=`/${prefixAdmin}/dashboard`) Tổng quan
+      if(role.permissions.includes("songs-category_view"))
+        li
+          a(href=`/${prefixAdmin}/topics`) Quản lý chủ đề
+      if(role.permissions.includes("songs_view"))
+        li
+          a(href=`/${prefixAdmin}/songs`) Quản lý bài hát
+      if(role.permissions.includes("singers_view"))
+        li
+          a(href=`/${prefixAdmin}/singers`) Quản lý ca sĩ
+      if(role.permissions.includes("roles_view"))
+        li
+          a(href=`/${prefixAdmin}/roles`) Nhóm quyền
+      if(role.permissions.includes("roles_permissions"))
+        li
+          a(href=`/${prefixAdmin}/roles/permissions`) Phân quyền
+      if(role.permissions.includes("accounts_view"))
+        li
+          a(href=`/${prefixAdmin}/accounts`) Tài khoản admin
+      if(role.permissions.includes("users_view"))
+        li
+          a(href=`/${prefixAdmin}/users`) Tài khoản user
+      if(role.permissions.includes("setting_view"))
+        li
+          a(href=`/${prefixAdmin}/settings/general`) Cài đặt chung
+      if  (role.permissions.includes("trash_view"))
+        li
+          .btn-group.dropup.trash
+            button.btn.btn-secondary.dropdown-toggle(type='button' data-toggle='dropdown' aria-expanded='false')
+              | Thùng rác
+            .dropdown-menu
+              a(
+                class = "dropdown-item"
+                href=`/${prefixAdmin}/trash/products`
+              ) Bài hát
+              a(
+                class = "dropdown-item"
+                href=`/${prefixAdmin}/trash/topics`
+              ) Danh mục
+              a(
+                class = "dropdown-item"
+                href=`/${prefixAdmin}/trash/users`
+              ) Tài khoản user
+              a(
+                class = "dropdown-item"
+                href=`/${prefixAdmin}/trash/singers`
+              ) Ca sĩ
+              a(
+                class = "dropdown-item"
+                href=`/${prefixAdmin}/trash/role`
+              ) Nhóm quyền
+              a(
+                class = "dropdown-item"
+                href=`/${prefixAdmin}/trash/account`
+              ) Tài khoản admin

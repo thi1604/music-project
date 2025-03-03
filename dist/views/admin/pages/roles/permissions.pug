@@ -1,0 +1,50 @@
+extends ../../layouts/default.pug
+include ../../mixins/feauter.pug
+
+block main
+  if(role.permissions.includes("roles_permissions"))
+    h1 Trang phân quyền
+    if(records)
+      div(class="text-right")
+        button(
+          type="submit"
+          class="btn btn-primary mb-3"
+          button-submit=`/${prefixAdmin}/roles/permissions`
+        ) Cập nhật
+    table(
+      class="table table-hover table-sm"
+      table-permissions
+    )
+      thead
+        tr
+          th Tính năng
+          each item in records
+            th(
+              class="text-center"
+              role-id=item.id
+            ) #{item.title}
+      tbody
+        +feauter("Danh mục bài hát", records, "songs-category")
+        +feauter("Quản lí bài hát", records, "songs")
+        +feauter("Quản lí ca sĩ", records, "singers")
+        +feauter("Nhóm quyền", records, "roles")
+        tr
+          td 
+            b Phân quyền
+          each item in records
+            td(class="text-center")
+              input(
+                type="checkbox" 
+                data-id=item.id 
+                data-name=`roles_permissions`
+                checked=(item.permissions.includes(`roles_permissions`) ? true : false)
+                disabled=(item.title == "Quản trị viên" ? true : false)
+              )
+        +feauter("Tài khoản admin", records, "accounts")
+        +feauter("Tài khoản user", records, "users")
+        +feauter("Thùng rác", records, "trash")
+        +feauter("Cài đặt chung", records, "setting")
+      
+      
+
+

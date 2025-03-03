@@ -1,0 +1,16 @@
+mixin pagination(pagination)
+  nav
+    ul(class="pagination")
+      if(pagination.currentPage > 1)
+        li(class="page-item" num-page=1)
+          button(class="page-link") Trang đầu
+        li(class="page-item" num-page=pagination.currentPage-1)
+          button(class="page-link") <<
+      - for (var i = 1; i <= pagination.totalPage; i++)
+        li(class="page-item" num-page=i)
+          button(class="page-link") #{i}
+      if(pagination.currentPage < pagination.totalPage)
+        li(class="page-item" num-page=pagination.currentPage+1)
+          button(class="page-link") >>
+        li(class="page-item" num-page=pagination.totalPage)
+          button(class="page-link") Trang cuối

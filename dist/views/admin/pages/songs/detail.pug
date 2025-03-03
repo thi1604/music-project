@@ -1,0 +1,36 @@
+extends ../../layouts/default.pug
+
+block main
+  if (role.permissions.includes("songs_view"))  
+    if (product.title)
+      h1(class="mb-4") #{product.title}
+
+    if (product.avatar)
+      div(class="mb-4")
+        img(
+          src=product.avatar
+          style="width: 100px"
+        )
+
+    if (product.status)
+      div(class="mb-4")
+        span Trạng thái:
+        if (product.status === "active")
+          span(class="badge badge-success") Hoạt động
+        else
+          span(class="badge badge-danger") Dừng hoạt động
+    if(product.createdAt)
+      div(class="mb-4") Tạo bởi: <b>#{product.namePersonCreated}</b>
+      div(class="mb-4") Thời gian tạo: <b> #{product.formatCreatedAt}</b>
+    if(product.updatedAt)
+      div(class="mb-4") Người sửa gần nhất: <b> #{product.namePersonUpdated}</b>
+      div(class="mb-4") Thời gian sửa: <b> #{product.formatUpdatedAt}</b>
+
+    if (product.description)
+      h2(class="mb-4") Mô tả sản phẩm
+      textarea(
+        class="form-control"
+        id="desc"
+        name="description"
+        rows="5"
+      ) #{product.description}

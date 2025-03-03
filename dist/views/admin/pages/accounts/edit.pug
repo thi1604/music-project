@@ -1,0 +1,104 @@
+extends ../../layouts/default.pug
+
+block main
+  if (role.permissions.includes("accounts_edit"))
+    h1(class="mb-4") Chỉnh sửa tài khoản
+
+    form(
+      action=`/${prefixAdmin}/accounts/edit/${Account.id}?_method=PATCH`
+      method="POST"
+      enctype="multipart/form-data"
+    )
+      div(class="form-group")
+        label(for="fullName") Họ tên *
+        input(
+          type="text"
+          class="form-control"
+          id="fullName"
+          name="fullName"
+          required
+          value=Account.fullName
+        )
+      div(class="form-group")
+        label(for="email") Email *
+        input(
+          type="email"
+          class="form-control"
+          id="email"
+          name="email"
+          required
+          value=Account.email
+        )
+      div(class="form-group")
+        label(for="password") Mật khẩu
+        input(
+          type="password"
+          class="form-control"
+          id="password"
+          name="password"
+        )
+      div(class="form-group")
+        label(for="phone") Số điện thoại
+        input(
+          type="text"
+          class="form-control"
+          id="phone"
+          name="phone"
+          value=Account.phone
+        )
+      div(
+        class="form-group"
+        upload-image
+      )
+        label(for="avatar") Avatar
+        input(
+          type="file"
+          class="form-control-file"
+          id="avatar"
+          name="avatar"
+          accept="image/*"
+          upload-image-input
+        )
+        img(
+          src=Account.avatar
+          class="image-preview"
+          upload-image-preview
+        )
+      div(class="form-group")
+        label(for="role_id") Phân quyền
+        select(name="role_id" id="role_id" class="form-control")
+          option(disabled) -- Chọn --
+          each item in roles
+            option(
+              value=item.id
+              selected=(item.id == Account.role_id ? true : false)
+            ) #{item.title}
+      div(class="form-group form-check form-check-inline")
+        input(
+          type="radio"
+          class="form-check-input"
+          id="statusActive"
+          name="status"
+          value="active"
+          checked=(Account.status == "active" ? true : false)
+        )
+        label(for="statusActive" class="form-check-label") Hoạt động
+      div(class="form-group form-check form-check-inline")
+        input(
+          type="radio"
+          class="form-check-input"
+          id="statusInActive"
+          name="status"
+          value="inactive"
+          checked=(Account.status == "inactive" ? true : false)
+        )
+        label(for="statusInActive" class="form-check-label") Dừng hoạt động
+      div(class="form-group")
+        button(
+          type="submit"
+          class="btn btn-primary"
+        ) Cập nhật
+        a(
+          href=`/${prefixAdmin}/accounts`
+          class="btn btn-danger ml-5"
+        ) Hủy
