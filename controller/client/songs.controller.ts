@@ -73,8 +73,13 @@ export const detail = async (req: Request, res: Response) => {
 }
 
 export const topSongs = async (req: Request, res: Response) => {
-  const listTopSongs = await songModel.find({
-  }).sort({ listenNumber: "desc" }).limit(3).select("title avatar singerIds slug listenNumber audio");
+  const listTopSongs = await songModel
+  .find({
+    deleted: false,
+    status: "active"
+  }).sort({ listenNumber: "desc" })
+  .limit(3)
+  .select("title avatar singerIds slug listenNumber audio");
   const dataFinal = [];
   for (const item of listTopSongs) {
     const singers = await singerModel.find({
@@ -403,7 +408,8 @@ export const randomSong = async (req: Request, res: Response) => {
 export const randomSongLogin = async (req: Request, res: Response) => {
   const slugSong = req.body.slugSong;
   const user = await userModel.findOne({
-    tokenUser: req.body.tokenUser
+    tokenUser: req.body.tokenUser,
+    status: "active"
   }).select("fullName");
   
   const song = await songModel.findOne({

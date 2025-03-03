@@ -8,7 +8,8 @@ export const index = async (req: Request, res: Response) =>{
 
   const filter = {
     outStanding: true,
-    deleted: false
+    deleted: false,
+    status: "active"
   }
  
   const listSingesrOS = await singerModel.find(filter);

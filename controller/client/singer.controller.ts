@@ -4,7 +4,8 @@ import { songModel } from "../../models/song.model";
 
 export const index = async (req: Request, res: Response) => {
   let filter = {
-    deleted: false
+    deleted: false,
+    status: "active"
   }
 
   if (req.body.outStanding && req.body.outStanding == true) {
@@ -19,7 +20,8 @@ export const index = async (req: Request, res: Response) => {
 export const detail = async (req: Request, res: Response) => {
   const singerCurrent = await singerModel.findOne({
     slug: req.params.slugSinger,
-    deleted: false
+    deleted: false,
+    status: "active"
   }).select("fullName avatar description slug");
 
   if(!singerCurrent){

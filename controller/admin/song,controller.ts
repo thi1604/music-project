@@ -155,7 +155,7 @@ export const editPatch = async (req:Request, res: Response) => {
         _id : id
       }, req.body);
       req.flash('success', 'Đã cập nhật!');
-      res.redirect('back');
+      res.redirect(`/${prefixAdmin}/songs/edit/${id}`);
     }
     catch(error){
       req.flash('error', 'Lỗi!');

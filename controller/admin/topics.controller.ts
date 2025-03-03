@@ -113,7 +113,7 @@ export const editPatch = async (req : Request, res: Response) => {
       _id : id
     }, req.body);
     req.flash("success", "Cập nhật thành công !");
-    res.redirect('back');
+    res.redirect(`/${prefixAdmin}/topics`);
   }
   else{
     res.send("403");

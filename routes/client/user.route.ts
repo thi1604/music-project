@@ -19,12 +19,12 @@ router.get("/logout", controller.logout);
 
 // router.get("/detail/:id", controller.detail);
 
-router.patch(
-  "/detail/edit/:id",
-  upload.single("avatar"),
-  uploadtoCloud,
-  controller.editPatch
-);
+// router.patch(
+//   "/detail/edit/:id",
+//   upload.single("avatar"),
+//   uploadtoCloud,
+//   controller.editPatch
+// );
  
 router.get("/change-password", controller.changePassword);
 

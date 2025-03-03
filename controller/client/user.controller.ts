@@ -189,26 +189,26 @@ export const detailUser = async (req:Request, res:Response) => {
   }
 }
 
-export const editPatch = async (req:Request, res:Response) => {
-  if(req.cookies.tokenUser) {
-    const idUser = req.params.id;
-    if(idUser != res.locals.user.id){
-      req.flash("error", "Lỗi!");
-      res.redirect("/");
-    }
-    else{
-      const id = res.locals.user.id;
-      await userModel.updateOne({
-        _id: id
-      }, req.body);
-    }
-    req.flash("success", "Cập nhật thành công!");
-    res.redirect("back");
-  }
-  else {
-    res.redirect("/user/login");
-  }
-}
+// export const editPatch = async (req:Request, res:Response) => {
+//   if(req.cookies.tokenUser) {
+//     const idUser = req.params.id;
+//     if(idUser != res.locals.user.id){
+//       req.flash("error", "Lỗi!");
+//       res.redirect("/");
+//     }
+//     else{
+//       const id = res.locals.user.id;
+//       await userModel.updateOne({
+//         _id: id
+//       }, req.body);
+//     }
+//     req.flash("success", "Cập nhật thành công!");
+//     res.redirect("/user/login");
+//   }
+//   else {
+//     res.redirect("/user/login");
+//   }
+// }
 
 export const changePassword = async (req:Request, res:Response) => {
   if(req.cookies.tokenUser){
