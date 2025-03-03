@@ -22,7 +22,7 @@ const DomainBE = process.env.DOMAIN_BACKEND;
 connect();
 
 app.use(cors({
-  origin: `${DomainBE}`,
+  origin: "https://fe-project-music.onrender.com",
 }));
 
 
