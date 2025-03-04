@@ -22,9 +22,15 @@ const port = process.env.PORT;
 app.use((0, cookie_parser_1.default)('ThiBeo'));
 app.use(express_1.default.static(`${__dirname}/public`));
 const DomainBE = process.env.DOMAIN_BACKEND;
+app.use((req, res, next) => {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+    next();
+});
 (0, database_1.connect)();
 app.use((0, cors_1.default)({
-    origin: `${DomainBE}`,
+    origin: DomainBE,
 }));
 app.locals["prefixAdmin"] = system_1.prefixAdmin;
 app.set("views", `${__dirname}/views`);
