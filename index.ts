@@ -1,8 +1,8 @@
-import express, {Express, Request, Response} from "express";
-import {connect} from "./config/database";
+import express, { Express, Request, Response } from "express";
+import { connect } from "./config/database";
 import dotenv from "dotenv";
-import {prefixAdmin} from "./config/system";
-import {routesClient} from "./routes/client/index.route";
+import { prefixAdmin } from "./config/system";
+import { routesClient } from "./routes/client/index.route";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import methodOverride from "method-override";
@@ -14,23 +14,26 @@ import cors from "cors";
 
 dotenv.config();
 
-const app : Express = express();
-const port : number | string = process.env.PORT;
+const app: Express = express();
+const port: number | string = process.env.PORT;
 app.use(cookieParser('ThiBeo'));
 app.use(express.static(`${__dirname}/public`)); // Nhung folder FE vao project
 const DomainBE = process.env.DOMAIN_BACKEND;
 
 app.use((req, res, next) => {
-  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-  res.setHeader("Pragma", "no-cache");
-  res.setHeader("Expires", "0");
+  // res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  // res.setHeader("Pragma", "no-cache");
+  // res.setHeader("Expires", "0");
   next();
 });
 connect();
 
-app.use(cors({
-  origin: DomainBE,
-}));
+// app.use(cors({
+//   origin: [DomainBE || `http://localhost:3000`], // Cho phép truy cập từ domain cụ thể
+//   credentials: true, // Cho phép gửi cookie từ client
+//   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+//   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+// }));
 
 
 app.locals["prefixAdmin"] = prefixAdmin;
@@ -73,6 +76,6 @@ app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce
 routesClient(app);
 routesAdmin(app);
 
-app.listen(port, ()=> {
+app.listen(port, () => {
   console.log(`App listening on port ${port}`);
 });

@@ -68,7 +68,7 @@ export const detail = async (req: Request, res: Response) => {
   res.json({
     songCurrent: song,
     singer: singers,
-    topicSlug: slugTopic.slug
+    topicSlug: slugTopic?.slug ?? ''
   })
 }
 
